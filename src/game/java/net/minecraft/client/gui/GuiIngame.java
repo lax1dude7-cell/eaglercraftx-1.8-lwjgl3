@@ -326,6 +326,7 @@ public class GuiIngame extends Gui {
 
 		GlStateManager.disableLighting();
 		GlStateManager.enableAlpha();
+		myau.Myau.onRender2D(partialTicks);
 	}
 
 	public void renderGameOverlayCrosshairs(int scaledResWidth, int scaledResHeight) {

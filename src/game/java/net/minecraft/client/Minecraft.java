@@ -447,6 +447,7 @@ public class Minecraft implements IThreadListener {
 				new ResourceLocation("textures/font/ascii_sga.png"), this.renderEngine, false);
 		this.mcResourceManager.registerReloadListener(this.fontRendererObj);
 		this.mcResourceManager.registerReloadListener(this.standardGalacticFontRenderer);
+		myau.Myau.init();
 		this.mcResourceManager.registerReloadListener(new GrassColorReloadListener());
 		this.mcResourceManager.registerReloadListener(new FoliageColorReloadListener());
 		this.mcResourceManager.registerReloadListener(new ShaderPackInfoReloadListener());
@@ -1198,6 +1199,7 @@ public class Minecraft implements IThreadListener {
 		WebViewOverlayController.runTick();
 		SingleplayerServerController.runTick();
 		RelayUpdateChecker.runTick();
+		myau.Myau.onTick();
 
 		UpdateResultObj update = UpdateService.getUpdateResult();
 		if (update != null) {
@@ -1413,6 +1415,9 @@ public class Minecraft implements IThreadListener {
 				}
 				KeyBinding.setKeyBindState(k, Keyboard.getEventKeyState());
 				if (Keyboard.getEventKeyState()) {
+					if (this.currentScreen == null) {
+						myau.Myau.onKeyPress(Keyboard.getEventKey());
+					}
 					KeyBinding.onTick(k);
 				}
 

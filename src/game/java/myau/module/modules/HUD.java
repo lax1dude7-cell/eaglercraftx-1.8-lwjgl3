@@ -21,34 +21,44 @@ import java.util.Locale;
 public class HUD extends Module {
     private static final Minecraft mc = Minecraft.getMinecraft();
 
-    public final ModeProperty colorMode = add(new ModeProperty("color", 0, new String[]{"RAINBOW", "CHROMA", "ASTOLFO", "CUSTOM1", "CUSTOM12", "CUSTOM123"}));
-    public final FloatProperty colorSpeed = add(new FloatProperty("color-speed", 1.0F, 0.5F, 1.5F));
-    public final PercentProperty colorSaturation = add(new PercentProperty("color-saturation", 50));
-    public final PercentProperty colorBrightness = add(new PercentProperty("color-brightness", 100));
-    public final ColorProperty custom1 = add(new ColorProperty("custom-color-1", 0xFFFFFF, () -> colorMode.getValue() >= 3));
-    public final ColorProperty custom2 = add(new ColorProperty("custom-color-2", 0xFFFFFF, () -> colorMode.getValue() >= 4));
-    public final ColorProperty custom3 = add(new ColorProperty("custom-color-3", 0xFFFFFF, () -> colorMode.getValue() == 5));
-    public final ModeProperty posX = add(new ModeProperty("position-x", 0, new String[]{"LEFT", "RIGHT"}));
-    public final ModeProperty posY = add(new ModeProperty("position-y", 0, new String[]{"TOP", "BOTTOM"}));
-    public final IntProperty offsetX = add(new IntProperty("offset-x", 0, 0, 255));
-    public final IntProperty offsetY = add(new IntProperty("offset-y", 25, 0, 255));
-    public final FloatProperty scale = add(new FloatProperty("scale", 1.0F, 0.5F, 1.5F));
-    public final PercentProperty background = add(new PercentProperty("background", 0));
-    public final BooleanProperty showBar = add(new BooleanProperty("bar", true));
-    public final ModeProperty sidebarMode = add(new ModeProperty("sidebar-mode", 1, new String[]{"RIGHT", "LEFT", "TOP", "NONE"}, () -> showBar.getValue()));
-    public final BooleanProperty shadow = add(new BooleanProperty("shadow", true));
-    public final BooleanProperty suffixes = add(new BooleanProperty("suffixes", true));
-    public final ModeProperty separatorMode = add(new ModeProperty("separator-mode", 0, new String[]{"SPACE", "-", "!", "[]", "{}", "()", "\"\""}, () -> suffixes.getValue()));
-    public final BooleanProperty lowerCase = add(new BooleanProperty("lower-case", true));
-    public final FloatProperty padding = add(new FloatProperty("padding", 0.0F, 0.0F, 6.0F));
-    public final BooleanProperty hideRender = add(new BooleanProperty("hide-render", false));
-    public final BooleanProperty hidePlayer = add(new BooleanProperty("hide-player", false));
-    public final BooleanProperty hideMisc = add(new BooleanProperty("hide-misc", false));
-    public final BooleanProperty infoLine = add(new BooleanProperty("info-line", true));
-    public final BooleanProperty playerHead = add(new BooleanProperty("player-head", true));
+    public final ModeProperty colorMode = new ModeProperty("color", 0, new String[]{"RAINBOW", "CHROMA", "ASTOLFO", "CUSTOM1", "CUSTOM12", "CUSTOM123"});
+    public final FloatProperty colorSpeed = new FloatProperty("color-speed", 1.0F, 0.5F, 1.5F);
+    public final PercentProperty colorSaturation = new PercentProperty("color-saturation", 50);
+    public final PercentProperty colorBrightness = new PercentProperty("color-brightness", 100);
+    public final ColorProperty custom1 = new ColorProperty("custom-color-1", 0xFFFFFF);
+    public final ColorProperty custom2 = new ColorProperty("custom-color-2", 0xFFFFFF);
+    public final ColorProperty custom3 = new ColorProperty("custom-color-3", 0xFFFFFF);
+    public final ModeProperty posX = new ModeProperty("position-x", 0, new String[]{"LEFT", "RIGHT"});
+    public final ModeProperty posY = new ModeProperty("position-y", 0, new String[]{"TOP", "BOTTOM"});
+    public final IntProperty offsetX = new IntProperty("offset-x", 0, 0, 255);
+    public final IntProperty offsetY = new IntProperty("offset-y", 25, 0, 255);
+    public final FloatProperty scale = new FloatProperty("scale", 1.0F, 0.5F, 1.5F);
+    public final PercentProperty background = new PercentProperty("background", 0);
+    public final BooleanProperty showBar = new BooleanProperty("bar", true);
+    public final ModeProperty sidebarMode = new ModeProperty("sidebar-mode", 1, new String[]{"RIGHT", "LEFT", "TOP", "NONE"});
+    public final BooleanProperty shadow = new BooleanProperty("shadow", true);
+    public final BooleanProperty suffixes = new BooleanProperty("suffixes", true);
+    public final ModeProperty separatorMode = new ModeProperty("separator-mode", 0, new String[]{"SPACE", "-", "!", "[]", "{}", "()", "\"\""});
+    public final BooleanProperty lowerCase = new BooleanProperty("lower-case", true);
+    public final FloatProperty padding = new FloatProperty("padding", 0.0F, 0.0F, 6.0F);
+    public final BooleanProperty hideRender = new BooleanProperty("hide-render", false);
+    public final BooleanProperty hidePlayer = new BooleanProperty("hide-player", false);
+    public final BooleanProperty hideMisc = new BooleanProperty("hide-misc", false);
+    public final BooleanProperty infoLine = new BooleanProperty("info-line", true);
+    public final BooleanProperty playerHead = new BooleanProperty("player-head", true);
 
     public HUD() {
         super("HUD", Category.RENDER, true, true);
+        custom1.showIfModeAtLeast(colorMode, 3);
+        custom2.showIfModeAtLeast(colorMode, 4);
+        custom3.showIfModeIs(colorMode, 5);
+        sidebarMode.showIf(showBar);
+        separatorMode.showIf(suffixes);
+        add(colorMode); add(colorSpeed); add(colorSaturation); add(colorBrightness);
+        add(custom1); add(custom2); add(custom3); add(posX); add(posY); add(offsetX); add(offsetY);
+        add(scale); add(background); add(showBar); add(sidebarMode); add(shadow); add(suffixes);
+        add(separatorMode); add(lowerCase); add(padding); add(hideRender); add(hidePlayer); add(hideMisc);
+        add(infoLine); add(playerHead);
     }
 
     // ---------- colour (ported from OpenMyau+) ----------

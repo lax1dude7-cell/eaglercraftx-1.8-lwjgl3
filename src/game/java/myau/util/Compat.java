@@ -4,8 +4,8 @@ import net.lax1dude.eaglercraft.v1_8.EagRuntime;
 import net.lax1dude.eaglercraft.v1_8.Keyboard;
 import net.lax1dude.eaglercraft.v1_8.Mouse;
 import net.lax1dude.eaglercraft.v1_8.opengl.EaglercraftGPU;
-import net.lax1dude.eaglercraft.v1_8.opengl.GlStateManager;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 
 import java.io.ByteArrayOutputStream;
@@ -56,6 +56,13 @@ public final class Compat {
         if (key <= 0) return "NONE";
         try { return Keyboard.getKeyName(key); } catch (Throwable t) { return "KEY" + key; }
     }
+
+    public static boolean isKeyDown(int key) {
+        if (key < 0) return Mouse.isButtonDown(key + 100);
+        return Keyboard.isKeyDown(key);
+    }
+
+    public static boolean isMouseDown(int button) { return Mouse.isButtonDown(button); }
 
     public static int eventWheel() { return Mouse.getEventDWheel(); }
 }

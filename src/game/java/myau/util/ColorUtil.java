@@ -44,6 +44,16 @@ public final class ColorUtil {
         return new float[]{hue, sat, bri};
     }
 
+    public static Color scale(Color color, float scaleFactor, int alpha) {
+        return new Color(Math.min(Math.max((int) ((float) color.getRed() * scaleFactor), 0), 255), Math.min(Math.max((int) ((float) color.getGreen() * scaleFactor), 0), 255), Math.min(Math.max((int) ((float) color.getBlue() * scaleFactor), 0), 255), alpha);
+    }
+
+    public static Color darker(Color color, float factor) {
+        return scale(color, factor, color.getAlpha());
+    }
+
+    public static int rgb(int r, int g, int b) { return 0xFF000000 | ((r & 255) << 16) | ((g & 255) << 8) | (b & 255); }
+
     public static int interpolate(float t, int c1, int c2) {
         t = Math.max(0f, Math.min(1f, t));
         int r = (int) (((c1 >> 16) & 255) + (((c2 >> 16) & 255) - ((c1 >> 16) & 255)) * t);

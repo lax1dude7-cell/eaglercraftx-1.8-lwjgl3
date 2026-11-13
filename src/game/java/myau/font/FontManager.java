@@ -17,7 +17,7 @@ public final class FontManager {
     public static final String MAIN = "main";
     private static int guiScale = 2;
     private static final Map<String, TTFFont> fonts = new HashMap<String, TTFFont>();
-    private static final Map<String, Map<Integer, UIFont>> cache = new HashMap<String, Map<Integer, UIFont>>();
+    private static final Map<String, UIFont> cache = new HashMap<String, UIFont>();
     private static final UIFont VANILLA = new VanillaFont();
 
     private FontManager() {}
@@ -30,7 +30,6 @@ public final class FontManager {
         }
         try {
             fonts.put(name, TTFFont.parse(data));
-            cache.remove(name);
             return true;
         } catch (Throwable t) {
             System.err.println("[Myau] Failed to parse font " + loc + ": " + t);
@@ -39,14 +38,12 @@ public final class FontManager {
     }
 
     public static UIFont get(String name, float size) {
-        Map<Integer, UIFont> m = cache.get(name);
-        if (m == null) { m = new HashMap<Integer, UIFont>(); cache.put(name, m); }
-        Integer key = Integer.valueOf(Math.round(size * 100f));
-        UIFont f = m.get(key);
+        String key = name + "@" + Math.round(size * 100f);
+        UIFont f = cache.get(key);
         if (f == null) {
             TTFFont t = fonts.get(name);
-            f = t != null ? new TTFFontRenderer(t, size) : VANILLA;
-            m.put(key, f);
+            f = t != null ? (UIFont) new TTFFontRenderer(t, size) : VANILLA;
+            cache.put(key, f);
         }
         return f;
     }

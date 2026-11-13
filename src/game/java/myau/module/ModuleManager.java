@@ -8,18 +8,20 @@ import java.util.List;
 import java.util.Map;
 
 public class ModuleManager {
-    private final Map<Class<?>, Module> byClass = new LinkedHashMap<Class<?>, Module>();
+    public final Map<Class<?>, Module> modules = new LinkedHashMap<Class<?>, Module>();
     private final List<Module> all = new ArrayList<Module>();
 
+    public void register(Module m, Category c) { m.setCategory(c); register(m); }
+
     public void register(Module m) {
-        byClass.put(m.getClass(), m);
+        modules.put(m.getClass(), m);
         all.add(m);
     }
 
     public boolean has(String name) { return getModule(name) != null; }
 
     @SuppressWarnings("unchecked")
-    public <T extends Module> T getModule(Class<T> c) { return (T) byClass.get(c); }
+    public <T extends Module> T getModule(Class<T> c) { return (T) modules.get(c); }
 
     public Module getModule(String name) {
         for (Module m : all) if (m.getName().equalsIgnoreCase(name)) return m;

@@ -23,7 +23,7 @@ public class ModuleComponent implements Component {
         this.category = category;
         this.offsetY = offsetY;
         int y = offsetY + 12;
-        for (Property<?> p : mod.getProperties()) {
+        for (Property p : mod.getProperties()) {
             Component c = null;
             if (p instanceof BooleanProperty) c = new CheckBoxComponent((BooleanProperty) p, this, y);
             else if (p instanceof SliderProperty) c = new SliderComponent((SliderProperty) p, this, y);

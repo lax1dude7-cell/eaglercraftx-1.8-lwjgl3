@@ -239,7 +239,7 @@ public class Minecraft implements IThreadListener {
 	public int displayHeight;
 	public float displayDPI;
 	private boolean field_181541_X = false;
-	private Timer timer = new Timer(20.0F);
+	public Timer timer = new Timer(20.0F);
 	public WorldClient theWorld;
 	public RenderGlobal renderGlobal;
 	private RenderManager renderManager;
@@ -268,7 +268,7 @@ public class Minecraft implements IThreadListener {
 	public MouseHelper mouseHelper;
 	private final String launchedVersion;
 	private static int debugFPS;
-	private int rightClickDelayTimer;
+	public int rightClickDelayTimer;
 	private String serverName;
 	private int serverPort;
 	public boolean inGameHasFocus;
@@ -1023,6 +1023,7 @@ public class Minecraft implements IThreadListener {
 	}
 
 	private void sendClickBlockToController(boolean leftClick) {
+		if (leftClick && myau.Hooks.hitBlock()) { this.playerController.resetBlockRemoving(); return; }
 		if (!leftClick) {
 			this.leftClickCounter = 0;
 		}
@@ -1044,6 +1045,8 @@ public class Minecraft implements IThreadListener {
 	}
 
 	private void clickMouse() {
+		if (myau.Hooks.noHitDelay()) this.leftClickCounter = 0;
+		if (myau.Hooks.leftClick()) return;
 		if (this.leftClickCounter <= 0) {
 			this.thePlayer.swingItem();
 			if (this.objectMouseOver == null) {
@@ -1078,6 +1081,7 @@ public class Minecraft implements IThreadListener {
 	 * Called when user clicked he's mouse right button (place)
 	 */
 	public void rightClickMouse() {
+		if (myau.Hooks.rightClick()) return;
 		if (!this.playerController.func_181040_m()) {
 			this.rightClickDelayTimer = 4;
 			boolean flag = true;
@@ -1170,6 +1174,7 @@ public class Minecraft implements IThreadListener {
 	 * Runs the current tick.
 	 */
 	public void runTick() throws IOException {
+		myau.Hooks.runTickHead();
 		if (this.rightClickDelayTimer > 0) {
 			--this.rightClickDelayTimer;
 		}
@@ -1410,13 +1415,15 @@ public class Minecraft implements IThreadListener {
 
 			while (Keyboard.next()) {
 				int k = Keyboard.getEventKey() == 0 ? Keyboard.getEventCharacter() + 256 : Keyboard.getEventKey();
+				boolean myauOpenedScreen = false;
 				if (k == 0x1D && (Keyboard.areKeysLocked() || isFullScreen())) {
 					KeyBinding.setKeyBindState(gameSettings.keyBindSprint.getKeyCode(), Keyboard.getEventKeyState());
 				}
 				KeyBinding.setKeyBindState(k, Keyboard.getEventKeyState());
 				if (Keyboard.getEventKeyState()) {
 					if (this.currentScreen == null) {
-						myau.Myau.onKeyPress(Keyboard.getEventKey());
+						myau.Hooks.key(Keyboard.getEventKey());
+						myauOpenedScreen = this.currentScreen != null;
 					}
 					KeyBinding.onTick(k);
 				}
@@ -1446,7 +1453,9 @@ public class Minecraft implements IThreadListener {
 					}
 
 					if (this.currentScreen != null) {
-						this.currentScreen.handleKeyboardInput();
+						if (!myauOpenedScreen) {
+							this.currentScreen.handleKeyboardInput();
+						}
 					} else {
 						if (k == 1 || (k > -1 && k == this.gameSettings.keyBindClose.getKeyCode())) {
 							this.displayInGameMenu();
@@ -1776,6 +1785,7 @@ public class Minecraft implements IThreadListener {
 		}
 
 		this.systemTime = getSystemTime();
+		myau.Hooks.runTickReturn();
 	}
 
 	private long placeTouchStartTime = -1l;
@@ -1874,6 +1884,7 @@ public class Minecraft implements IThreadListener {
 	 * unloads the current world first
 	 */
 	public void loadWorld(WorldClient worldClientIn, String loadingMessage) {
+		myau.Hooks.loadWorld();
 		if (worldClientIn == null) {
 			NetHandlerPlayClient nethandlerplayclient = this.getNetHandler();
 			if (nethandlerplayclient != null) {

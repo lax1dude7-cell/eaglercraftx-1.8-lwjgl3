@@ -63,12 +63,8 @@ public class ClickGui extends GuiScreen {
     }
 
     @Override
-    public void handleMouseInput() {
-        try {
-            super.handleMouseInput();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void handleMouseInput() throws IOException {
+        super.handleMouseInput();
         int wheel = Compat.eventWheel();
         if (wheel != 0) {
             int dir = wheel > 0 ? 1 : -1;
@@ -79,7 +75,7 @@ public class ClickGui extends GuiScreen {
     }
 
     @Override
-    protected void mouseClicked(int x, int y, int button) {
+    protected void mouseClicked(int x, int y, int button) throws IOException {
         for (CategoryComponent c : categories) {
             if (button == 0 && c.insideHeader(x, y)) {
                 if (c.onToggleButton(x, y)) c.setOpened(!c.isOpened());
@@ -100,7 +96,7 @@ public class ClickGui extends GuiScreen {
     }
 
     @Override
-    protected void keyTyped(char ch, int key) {
+    protected void keyTyped(char ch, int key) throws IOException {
         boolean capturing = false;
         for (CategoryComponent c : categories) {
             if (!c.isOpened()) continue;

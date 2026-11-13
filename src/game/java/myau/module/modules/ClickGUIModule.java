@@ -12,7 +12,7 @@ public class ClickGUIModule extends Module {
     }
 
     @Override
-    protected void onEnable() {
+    public void onEnabled() {
         Minecraft mc = Minecraft.getMinecraft();
         if (mc.currentScreen == null) mc.displayGuiScreen(ClickGui.getInstance());
     }

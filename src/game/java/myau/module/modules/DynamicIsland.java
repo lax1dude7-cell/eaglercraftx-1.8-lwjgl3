@@ -14,11 +14,12 @@ import net.minecraft.client.network.NetworkPlayerInfo;
 /** Top-centre pill: "Myau+ · name · 0ms to SinglePlayer · 43fps". (Blur/glow shaders omitted: not portable to WebGL.) */
 public class DynamicIsland extends Module {
     private static final Minecraft mc = Minecraft.getMinecraft();
-    public final ColorProperty accent = add(new ColorProperty("AccentColor", 0xE0C828));
-    public final BooleanProperty textShadow = add(new BooleanProperty("TextShadow", true));
+    public final ColorProperty accent = new ColorProperty("AccentColor", 0xE0C828);
+    public final BooleanProperty textShadow = new BooleanProperty("TextShadow", true);
 
     public DynamicIsland() {
         super("DynamicIsland", Category.RENDER, true, false);
+        add(accent); add(textShadow);
     }
 
     @Override

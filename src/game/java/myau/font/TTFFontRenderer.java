@@ -4,14 +4,13 @@ import myau.font.ttf.GlyphRasterizer;
 import myau.font.ttf.TTFFont;
 import myau.util.Compat;
 import myau.util.RenderUtil;
-import net.lax1dude.eaglercraft.v1_8.opengl.GlStateManager;
-import net.lax1dude.eaglercraft.v1_8.opengl.Tessellator;
-import net.lax1dude.eaglercraft.v1_8.opengl.VertexFormat;
-import net.lax1dude.eaglercraft.v1_8.opengl.WorldRenderer;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 
 import java.util.Arrays;
-import java.util.HashMap;
 
 /**
  * Renders a real .ttf at a given size. Glyphs are rasterised lazily by our own rasteriser into one atlas
@@ -30,7 +29,7 @@ public final class TTFFontRenderer implements UIFont {
     private final TTFFont font;
     private final float size;
     private final GlyphRasterizer rasterizer = new GlyphRasterizer();
-    private final HashMap<Integer, Glyph> glyphs = new HashMap<Integer, Glyph>();
+    private final Glyph[] glyphs = new Glyph[65536];
     private final int[] atlas = new int[ATLAS * ATLAS];
     private DynamicTexture tex;
     private boolean dirty;
@@ -53,15 +52,14 @@ public final class TTFFontRenderer implements UIFont {
     }
 
     private void clear() {
-        glyphs.clear();
+        Arrays.fill(glyphs, null);
         Arrays.fill(atlas, 0);
         penX = 1; penY = 1; rowH = 0;
         dirty = true;
     }
 
     private Glyph glyph(char c) {
-        Integer key = Integer.valueOf(c);
-        Glyph g = glyphs.get(key);
+        Glyph g = glyphs[c];
         if (g != null) return g;
         int gid = font.glyphIndex(c);
         if (gid == 0 && c != '?' && c > 32) return glyph('?');
@@ -86,7 +84,7 @@ public final class TTFFontRenderer implements UIFont {
                 dirty = true;
             }
         }
-        glyphs.put(key, g);
+        glyphs[c] = g;
         return g;
     }
 
@@ -136,7 +134,7 @@ public final class TTFFontRenderer implements UIFont {
 
         Tessellator t = Tessellator.getInstance();
         WorldRenderer wr = t.getWorldRenderer();
-        wr.begin(7, VertexFormat.POSITION_TEX);
+        wr.begin(7, DefaultVertexFormats.POSITION_TEX);
         float pen = x * scale;
         float base = Math.round(y * scale + font.capHeight * rs);
         for (int i = 0; i < s.length(); i++) {

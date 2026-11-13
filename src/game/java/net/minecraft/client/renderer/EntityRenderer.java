@@ -306,6 +306,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
 			if (this.mc.theWorld != null) {
 				this.mc.pointedEntity = null;
 				double d0 = (double) this.mc.playerController.getBlockReachDistance();
+				d0 = myau.Hooks.raytraceRange(d0);
 				this.mc.objectMouseOver = entity.rayTrace(d0, partialTicks);
 				double d1 = d0;
 				Vec3 vec3 = entity.getPositionEyes(partialTicks);
@@ -370,7 +371,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
 					}
 				}
 
-				if (this.pointedEntity != null && flag && vec3.distanceTo(vec33) > 3.0D) {
+				if (this.pointedEntity != null && flag && vec3.distanceTo(vec33) > myau.Hooks.pickRange(3.0D)) {
 					this.pointedEntity = null;
 					this.mc.objectMouseOver = new MovingObjectPosition(MovingObjectPosition.MovingObjectType.MISS,
 							vec33, (EnumFacing) null, new BlockPos(vec33));
@@ -586,7 +587,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
 	/**+
 	 * sets up projection, view effects, camera position/rotation
 	 */
-	private void setupCameraTransform(float partialTicks, int pass) {
+	public void setupCameraTransform(float partialTicks, int pass) {
 		this.farPlaneDistance = (float) (this.mc.gameSettings.renderDistanceChunks * 16 + 16);
 		GlStateManager.matrixMode(GL_PROJECTION);
 		GlStateManager.loadIdentity();
@@ -877,6 +878,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
 	}
 
 	public void func_181560_a(float parFloat1, long parLong1) {
+		myau.Hooks.renderFrameHead();
 		if (!initializedOF) {
 			Config.frameInitHook();
 			initializedOF = true;
@@ -1056,6 +1058,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
 				this.mc.voiceOverlay.drawOverlay();
 			}
 		}
+		myau.Hooks.renderFrameReturn();
 	}
 
 	public void renderStreamIndicator(float partialTicks) {
@@ -1341,6 +1344,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
 
 		if (this.renderHand) {
 			GlStateManager.clear(GL_DEPTH_BUFFER_BIT);
+			myau.Hooks.render3D(partialTicks);
 			this.renderHand(partialTicks, pass);
 			this.renderWorldDirections(partialTicks);
 		}

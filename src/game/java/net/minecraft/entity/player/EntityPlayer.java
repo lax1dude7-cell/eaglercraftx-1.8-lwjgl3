@@ -136,8 +136,8 @@ public abstract class EntityPlayer extends EntityLivingBase implements ICommandS
 	public int experienceTotal;
 	public float experience;
 	private int xpSeed;
-	private ItemStack itemInUse;
-	private int itemInUseCount;
+	public ItemStack itemInUse;
+	public int itemInUseCount;
 	protected float speedOnGround = 0.1F;
 	protected float speedInAir = 0.02F;
 	private int lastXPSound;

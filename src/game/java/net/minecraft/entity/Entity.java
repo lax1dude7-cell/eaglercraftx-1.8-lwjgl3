@@ -104,7 +104,7 @@ public abstract class Entity implements ICommandSender {
 	public boolean isCollidedVertically;
 	public boolean isCollided;
 	public boolean velocityChanged;
-	protected boolean isInWeb;
+	public boolean isInWeb;
 	private boolean isOutsideBorder;
 	public boolean isDead;
 	public float width;
@@ -284,6 +284,7 @@ public abstract class Entity implements ICommandSender {
 	 * degrees.
 	 */
 	public void setAngles(float yaw, float pitch) {
+		if (myau.Hooks.cancelSetAngles(this)) return;
 		float f = this.rotationPitch;
 		float f1 = this.rotationYaw;
 		this.rotationYaw = (float) ((double) this.rotationYaw + (double) yaw * 0.15D);
@@ -1687,7 +1688,7 @@ public abstract class Entity implements ICommandSender {
 	}
 
 	public float getCollisionBorderSize() {
-		return 0.1F;
+		return myau.Hooks.collisionBorderSize(this, 0.1F);
 	}
 
 	/**+
@@ -1738,6 +1739,7 @@ public abstract class Entity implements ICommandSender {
 	 * Sets the velocity to the args. Args: x, y, z
 	 */
 	public void setVelocity(double x, double y, double z) {
+		myau.events.KnockbackEvent ev = myau.Hooks.knockback(this, x, y, z); if (ev != null && ev.isCancelled()) { this.motionX = ev.getX(); this.motionY = ev.getY(); this.motionZ = ev.getZ(); return; }
 		this.motionX = x;
 		this.motionY = y;
 		this.motionZ = z;

@@ -47,7 +47,7 @@ val wasmOutputFileName = "classes.wasm"
 
 teavm.wasmGC {
 	targetFileName = "../" + wasmOutputFileName
-	optimization = OptimizationLevel.AGGRESSIVE
+	optimization = OptimizationLevel.BALANCED
 	outOfProcess = false
 	fastGlobalAnalysis = false
 	processMemory = 512

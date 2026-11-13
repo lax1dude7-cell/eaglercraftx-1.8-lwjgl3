@@ -1,33 +1,17 @@
-# Prompt for GitHub Copilot (paste into Copilot Chat / agent mode in the Codespace)
+# Prompt for GitHub Copilot (agent mode) - Combat modules delivery
 
-You are working in the EaglercraftX 1.8.8 repo (arlenhaghighatjou/eaglercraftx-1.8-lwjgl3). I am adding a client UI layer.
-I already wrote all the code - it is in `myau-eaglercraft-ui/src/main/java/myau/**`. YOUR JOB IS ONLY INTEGRATION. Do not redesign or rewrite the UI.
+You are working in the EaglercraftX 1.8.8 repo. I added a client layer in `myau-eaglercraft-ui/src/main/java/myau/**` (ClickGui, HUD, TTF font
+manager, event system, managers, utilities and ALL Combat modules ported from OpenMyau+). YOUR JOB IS ONLY INTEGRATION. Do not redesign,
+rename, "improve", or rewrite any of it. Keep Java 8 source level and TeaVM compatibility (no reflection, no java.awt, no threads, no lambdas, no streams).
 
-## Step 1 - copy the code
-Copy the folder `myau/` into the repo's game source root, next to `net/minecraft/` (find the folder that contains `net/minecraft/client/Minecraft.java` and put `myau/` beside `net/`). Keep package names (`myau.*`).
-
-## Step 2 - fix API mismatches (ONLY in `myau/util/Compat.java` where possible)
-The code was compile-checked against stubs, so the only expected errors are Eaglercraft API names. Make each of these compile against THIS repo, keeping the same behaviour:
-- `Compat.setLinearFilter` -> sets GL_LINEAR min+mag filter on the given GL texture id (use whatever EaglercraftGPU/GlStateManager/TextureUtil offers).
-- `Compat.storageGet/storageSet` -> persist a String under a key (EagRuntime storage or the repo's virtual filesystem).
-- `Compat.keyName`, `Compat.eventWheel` -> `Keyboard.getKeyName`, `Mouse.getEventDWheel` from the Eaglercraft input classes.
-- `ClickGui.handleMouseInput` uses `Mouse.getEventX()/getEventY()` - fix the import/class if different.
-- Any `GlStateManager`, `Tessellator`/`WorldRenderer`, `DynamicTexture`, `DefaultVertexFormats` call that does not exist: replace with the Eaglercraft equivalent. Do NOT add java.awt / javax.imageio / reflection / threads - the code must stay TeaVM-compatible (Java 8 source level).
-
-## Step 3 - font file
-Copy my TrueType font to `<resources root>/assets/minecraft/myau/fonts/main.ttf` (the same place `assets/minecraft/textures/...` lives, so it is packed into the EPK / resource bundle). It must be a glyph-based TrueType `.ttf` (not CFF .otf). If it is not found the UI falls back to the vanilla font and prints "[Myau] Font not found" - make sure that message does not appear.
-
-## Step 4 - hooks (4 small edits, nothing else)
-1. `Minecraft.startGame()` - after `fontRendererObj` is created / resource manager is ready: `myau.Myau.init();`
-2. `GuiIngame.renderGameOverlay(float partialTicks)` - at the very END of the method: `myau.Myau.onRender2D(partialTicks);`
-3. `Minecraft.runTick()` - in the keyboard event loop, when a key is pressed and `currentScreen == null`: `myau.Myau.onKeyPress(Keyboard.getEventKey());` (RIGHT SHIFT opens the ClickGui)
-4. `Minecraft.runTick()` - once per tick: `myau.Myau.onTick();`
-
-## Step 5 - verify
-- Build the web (TeaVM) AND desktop (LWJGL3) runtimes; both must compile.
-- In game: Right Shift opens the ClickGui with 5 panels (Combat, Movement, Render, Player, Misc); left-click toggles a module, right-click expands its settings, drag headers, scroll long panels, click the +/- to collapse.
-- HUD shows: top-left info line, player head + name, rainbow arraylist with a left bar, and the DynamicIsland pill top-centre.
-- Text must be crisp and use my TTF at GUI scale 1, 2, 3 and 4 (change Video Settings > GUI Scale).
-- Report every file you changed and every API you had to substitute.
-
-Do NOT add modules, rename classes, change visuals, or "improve" the architecture. `StubModules.java` is intentional placeholder data for visual parity and will be deleted later.
+1. Replace the old `myau/` folder (beside `net/`) with the new one. Keep package names.
+2. Follow `ENGINE_HOOKS.md` EXACTLY: section A (make listed members public) and section B (hooks 1-22). Each hook is a one-line call into `myau.Hooks`
+   / `myau.Myau`; do not copy logic into the engine classes. Skip a hook only if the spot truly doesn't exist and tell me which.
+3. Fix API-name mismatches with this repo's Eaglercraft classes. Prefer fixing in `myau/util/Compat.java`, `myau/util/Acc.java`, `myau/util/RenderUtil.java`
+   (Tessellator/GlStateManager names) and `myau/util/PacketUtil.java` (`NetworkManager.sendPacket`). Remaining expected mismatches are small
+   (e.g. `Keyboard`/`Mouse` classes, `EagRuntime.getStorage/setStorage`, `EaglercraftGPU.glTexParameteri`, Guava `Multimap` in `ItemUtil`).
+4. Copy my `.ttf` to `<resources>/assets/minecraft/myau/fonts/main.ttf`.
+5. Build BOTH the TeaVM (WASM-GC and JS) and the LWJGL3 desktop runtimes. If WASM-GC fails validation ("local.set expected type ref"), report the
+   offending Java method (enable TeaVM debug/name section) instead of guessing.
+6. Test in game (singleplayer): RIGHT SHIFT opens the ClickGui; Combat panel lists 21 modules; right-click a module -> its settings;
+   enable KillAura, Reach, Velocity, HitBox, AimAssist, AutoClicker and verify they react. Report every file you changed and every API you substituted.

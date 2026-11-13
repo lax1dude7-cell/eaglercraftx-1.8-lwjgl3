@@ -146,7 +146,7 @@ public abstract class EntityLivingBase extends Entity {
 	private EntityLivingBase lastAttacker;
 	private int lastAttackerTime;
 	private float landMovementFactor;
-	private int jumpTicks;
+	public int jumpTicks;
 	private float absorptionAmount;
 
 	/**+
@@ -1312,7 +1312,7 @@ public abstract class EntityLivingBase extends Entity {
 		}
 
 		if (this.isSprinting()) {
-			float f = this.rotationYaw * 0.017453292F;
+			float f = myau.Hooks.jumpYawRadians(this, this.rotationYaw * 0.017453292F);
 			this.motionX -= (double) (MathHelper.sin(f) * 0.2F);
 			this.motionZ += (double) (MathHelper.cos(f) * 0.2F);
 		}
@@ -1354,7 +1354,7 @@ public abstract class EntityLivingBase extends Entity {
 						f7 = this.jumpMovementFactor;
 					}
 
-					this.moveFlying(f, f1, f7);
+					myau.Hooks.moveFlying(this, f, f1, f7);
 					f6 = 0.91F;
 					if (this.onGround) {
 						f6 = this.worldObj.getBlockState(new BlockPos(MathHelper.floor_double(this.posX),
@@ -1401,7 +1401,7 @@ public abstract class EntityLivingBase extends Entity {
 					this.motionZ *= (double) f6;
 				} else {
 					double d1 = this.posY;
-					this.moveFlying(f, f1, 0.02F);
+					myau.Hooks.moveFlying(this, f, f1, 0.02F);
 					this.moveEntity(this.motionX, this.motionY, this.motionZ);
 					this.motionX *= 0.5D;
 					this.motionY *= 0.5D;
@@ -1430,7 +1430,7 @@ public abstract class EntityLivingBase extends Entity {
 					f4 += (this.getAIMoveSpeed() * 1.0F - f4) * f5 / 3.0F;
 				}
 
-				this.moveFlying(f, f1, f4);
+				myau.Hooks.moveFlying(this, f, f1, f4);
 				this.moveEntity(this.motionX, this.motionY, this.motionZ);
 				this.motionX *= (double) f3;
 				this.motionY *= 0.800000011920929D;

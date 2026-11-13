@@ -1,12 +1,14 @@
 package myau;
 
 import myau.font.FontManager;
+import myau.management.*;
+import myau.module.Category;
 import myau.module.Module;
 import myau.module.ModuleManager;
 import myau.module.modules.*;
-import net.lax1dude.eaglercraft.v1_8.opengl.GlStateManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 
 public final class Myau {
@@ -14,12 +16,19 @@ public final class Myau {
     public static final String INFO_NAME = "OpenMyau";
     public static final String VERSION = "1.6+3";
     public static final String CREDIT = "dev, nespola";
+    public static String clientName = "&7[&cM&6y&ea&au&7+]&r ";
     public static final long START_TIME = System.currentTimeMillis();
 
     /** Put your .ttf at  assets/minecraft/myau/fonts/main.ttf  (must be a TrueType/glyf font, not CFF .otf). */
     public static final ResourceLocation FONT_MAIN = new ResourceLocation("minecraft", "myau/fonts/main.ttf");
 
     public static ModuleManager moduleManager;
+    public static BlinkManager blinkManager;
+    public static LagManager lagManager;
+    public static PlayerStateManager playerStateManager;
+    public static RotationManager rotationManager;
+    public static FriendManager friendManager;
+    public static TargetManager targetManager;
     private static boolean initialised;
 
     private Myau() {}
@@ -30,11 +39,21 @@ public final class Myau {
         initialised = true;
         FontManager.register(FontManager.MAIN, FONT_MAIN);
 
+        blinkManager = new BlinkManager();
+        lagManager = new LagManager();
+        playerStateManager = new PlayerStateManager();
+        rotationManager = new RotationManager();
+        friendManager = new FriendManager();
+        targetManager = new TargetManager();
+        friendManager.load();
+        targetManager.load();
+
         moduleManager = new ModuleManager();
-        moduleManager.register(new HUD());
-        moduleManager.register(new DynamicIsland());
-        moduleManager.register(new ClickGUIModule());
-        StubModules.register(moduleManager); // delete when real modules exist
+        moduleManager.register(new HUD(), Category.RENDER);
+        moduleManager.register(new DynamicIsland(), Category.RENDER);
+        moduleManager.register(new ClickGUIModule(), Category.RENDER);
+        CombatModules.register(moduleManager);   // real Combat modules
+        StubModules.register(moduleManager);     // placeholders for everything else (skipped if a real module exists)
     }
 
     /** Call at the END of GuiIngame.renderGameOverlay. */
@@ -51,14 +70,9 @@ public final class Myau {
         GlStateManager.color(1f, 1f, 1f, 1f);
     }
 
-    /** Call when a key is pressed in-game (currentScreen == null). */
+    /** Toggle modules bound to this key (called from Hooks.key). */
     public static void onKeyPress(int key) {
         if (!initialised || key <= 0) return;
         for (Module m : moduleManager.all()) if (m.getKey() == key) m.toggle();
-    }
-
-    public static void onTick() {
-        if (!initialised) return;
-        for (Module m : moduleManager.all()) if (m.isEnabled()) m.onTick();
     }
 }

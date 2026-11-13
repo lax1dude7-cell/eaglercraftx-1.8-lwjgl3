@@ -1,10 +1,12 @@
 package myau.property.properties;
 
 import myau.property.Property;
-import java.util.function.BooleanSupplier;
 
-public class TextProperty extends Property<String> {
-    public TextProperty(String name, String def) { super(name, def, null); }
-    public TextProperty(String name, String def, BooleanSupplier vis) { super(name, def, vis); }
+public class TextProperty extends Property {
+    private String value;
+    public TextProperty(String name, String def) { super(name); value = def; }
+    public TextProperty(String name, String def, myau.property.Condition c) { this(name, def); setCondition(c); }
+    public String getValue() { return value; }
+    public void setValue(String v) { value = v; }
     public String formatValue() { return value; }
 }

@@ -80,8 +80,8 @@ public class EntityPlayerSP extends AbstractClientPlayer {
 	private double lastReportedPosX;
 	private double lastReportedPosY;
 	private double lastReportedPosZ;
-	private float lastReportedYaw;
-	private float lastReportedPitch;
+	public float lastReportedYaw;
+	public float lastReportedPitch;
 	private boolean serverSneakState;
 	private boolean serverSprintState;
 	private int positionUpdateTicks;
@@ -139,17 +139,21 @@ public class EntityPlayerSP extends AbstractClientPlayer {
 	 * Called to update the entity's position/logic.
 	 */
 	public void onUpdate() {
+		myau.Hooks.playerUpdateHead(this);
 		if (this.worldObj.isBlockLoaded(new BlockPos(this.posX, 0.0D, this.posZ))) {
 			super.onUpdate();
+			myau.Hooks.applyRotationOverride(this);
 			if (this.isRiding()) {
 				this.sendQueue.addToSendQueue(
 						new C03PacketPlayer.C05PacketPlayerLook(this.rotationYaw, this.rotationPitch, this.onGround));
 				this.sendQueue.addToSendQueue(new C0CPacketInput(this.moveStrafing, this.moveForward,
 						this.movementInput.jump, this.movementInput.sneak));
 			} else {
+				myau.Hooks.motionUpdate();
 				this.onUpdateWalkingPlayer();
 			}
 
+			myau.Hooks.playerUpdateReturn(this);
 		}
 	}
 
@@ -659,6 +663,7 @@ public class EntityPlayerSP extends AbstractClientPlayer {
 		float f = 0.8F;
 		boolean flag2 = this.movementInput.moveForward >= f;
 		this.movementInput.updatePlayerMoveState();
+		myau.Hooks.moveInput();
 		if (this.isUsingItem() && !this.isRiding()) {
 			this.movementInput.moveStrafe *= 0.2F;
 			this.movementInput.moveForward *= 0.2F;
@@ -745,6 +750,7 @@ public class EntityPlayerSP extends AbstractClientPlayer {
 			this.horseJumpPower = 0.0F;
 		}
 
+		myau.Hooks.livingUpdate();
 		super.onLivingUpdate();
 		if (this.onGround && this.capabilities.isFlying && !this.mc.playerController.isSpectatorMode()) {
 			this.capabilities.isFlying = false;

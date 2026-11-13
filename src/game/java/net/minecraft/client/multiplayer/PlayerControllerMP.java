@@ -59,15 +59,15 @@ public class PlayerControllerMP {
 	private final NetHandlerPlayClient netClientHandler;
 	private BlockPos currentBlock = new BlockPos(-1, -1, -1);
 	private ItemStack currentItemHittingBlock;
-	private float curBlockDamageMP;
+	public float curBlockDamageMP;
 	private float stepSoundTickCounter;
-	private int blockHitDelay;
-	private boolean isHittingBlock;
+	public int blockHitDelay;
+	public boolean isHittingBlock;
 	/**+
 	 * Current game type for the player
 	 */
 	private WorldSettings.GameType currentGameType = WorldSettings.GameType.SURVIVAL;
-	private int currentPlayerItem;
+	public int currentPlayerItem;
 
 	public PlayerControllerMP(Minecraft mcIn, NetHandlerPlayClient parNetHandlerPlayClient) {
 		this.mc = mcIn;
@@ -338,7 +338,7 @@ public class PlayerControllerMP {
 	/**+
 	 * Syncs the current player item with the server
 	 */
-	private void syncCurrentPlayItem() {
+	public void syncCurrentPlayItem() {
 		int i = this.mc.thePlayer.inventory.currentItem;
 		if (i != this.currentPlayerItem) {
 			this.currentPlayerItem = i;
@@ -426,6 +426,7 @@ public class PlayerControllerMP {
 	 * Attacks an entity
 	 */
 	public void attackEntity(EntityPlayer playerIn, Entity targetEntity) {
+		myau.Hooks.attack(targetEntity);
 		this.syncCurrentPlayItem();
 		this.netClientHandler.addToSendQueue(new C02PacketUseEntity(targetEntity, C02PacketUseEntity.Action.ATTACK));
 		if (this.currentGameType != WorldSettings.GameType.SPECTATOR) {
@@ -497,6 +498,7 @@ public class PlayerControllerMP {
 	}
 
 	public void onStoppedUsingItem(EntityPlayer playerIn) {
+		if (myau.Hooks.cancelUse()) return;
 		this.syncCurrentPlayItem();
 		this.netClientHandler.addToSendQueue(new C07PacketPlayerDigging(C07PacketPlayerDigging.Action.RELEASE_USE_ITEM,
 				BlockPos.ORIGIN, EnumFacing.DOWN));

@@ -210,7 +210,10 @@ public class ItemUtil {
             ItemStack itemStack = ItemUtil.mc.thePlayer.inventory.getStackInSlot(currentSlot);
             if (itemStack == null) continue;
             if (!(itemStack.getItem() instanceof ItemTool)) continue;
-            if (!itemStack.getItem().getToolClasses(itemStack).contains(toolClass)) continue;
+            Item tool = itemStack.getItem();
+            if (!("pickaxe".equals(toolClass) && tool instanceof ItemPickaxe)
+                    && !("shovel".equals(toolClass) && tool instanceof ItemSpade)
+                    && !("axe".equals(toolClass) && tool instanceof ItemAxe)) continue;
             if (checkDurability) {
                 if (itemStack.isItemDamaged()) {
                     if (itemStack.getMaxDamage() - itemStack.getItemDamage() < 30) {
@@ -353,7 +356,7 @@ public class ItemUtil {
         if (itemStack == null) {
             return false;
         }
-        if (ItemPotion.isSplash(itemStack.getItem().getMetadata(itemStack))) {
+        if (ItemPotion.isSplash(itemStack.getMetadata())) {
             return false;
         }
         return itemStack.getItemUseAction() == EnumAction.EAT || itemStack.getItemUseAction() == EnumAction.DRINK;

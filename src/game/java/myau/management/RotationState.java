@@ -20,7 +20,7 @@ public class RotationState {
         double deltaX = RotationState.mc.thePlayer.posX - RotationState.mc.thePlayer.prevPosX;
         double deltaZ = RotationState.mc.thePlayer.posZ - RotationState.mc.thePlayer.prevPosZ;
         if ((float) (deltaX * deltaX + deltaZ * deltaZ) > 0.0025000002f) {
-            newYawOffset = (float) MathHelper.atan2(deltaZ, deltaX) * 180.0f / (float) Math.PI - 90.0f;
+            newYawOffset = (float) Math.atan2(deltaZ, deltaX) * 180.0f / (float) Math.PI - 90.0f;
         }
         if (RotationState.mc.thePlayer.swingProgress > 0.0f) {
             newYawOffset = targetYaw;

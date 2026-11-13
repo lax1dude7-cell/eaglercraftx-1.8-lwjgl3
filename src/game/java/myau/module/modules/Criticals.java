@@ -129,7 +129,7 @@ public class Criticals extends Module {
         if (this.isEnabled()) {
             if (event.getType() == EventType.SEND) {
                 if ((Integer) this.mode.getValue() == 4 && event.getPacket() instanceof C03PacketPlayer) {
-                    Acc.setOnGround(event.getPacket(), false);
+                    Acc.setOnGround((C03PacketPlayer) event.getPacket(), false);
                 }
 
             }

@@ -75,7 +75,7 @@ public class ClickGui extends GuiScreen {
     }
 
     @Override
-    protected void mouseClicked(int x, int y, int button) throws IOException {
+    protected void mouseClicked(int x, int y, int button) {
         for (CategoryComponent c : categories) {
             if (button == 0 && c.insideHeader(x, y)) {
                 if (c.onToggleButton(x, y)) c.setOpened(!c.isOpened());
@@ -96,7 +96,7 @@ public class ClickGui extends GuiScreen {
     }
 
     @Override
-    protected void keyTyped(char ch, int key) throws IOException {
+    protected void keyTyped(char ch, int key) {
         boolean capturing = false;
         for (CategoryComponent c : categories) {
             if (!c.isOpened()) continue;

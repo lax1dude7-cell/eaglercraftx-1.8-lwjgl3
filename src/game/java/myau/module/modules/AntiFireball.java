@@ -34,7 +34,7 @@ public class AntiFireball extends Module {
     public final ModeProperty showTarget = new ModeProperty("show-target", 0, new String[]{"NONE", "DEFAULT", "HUD"});
 
     private boolean isValidTarget(EntityFireball entityFireball) {
-        return !entityFireball.getEntityBoundingBox().hasNaN() && RotationUtil.distanceToEntity(entityFireball) <= (double) this.range.getValue() + 3.0
+        return !Compat.hasNaN(entityFireball.getEntityBoundingBox()) && RotationUtil.distanceToEntity(entityFireball) <= (double) this.range.getValue() + 3.0
                 && RotationUtil.angleToEntity(entityFireball) <= (float) this.fov.getValue();
     }
 

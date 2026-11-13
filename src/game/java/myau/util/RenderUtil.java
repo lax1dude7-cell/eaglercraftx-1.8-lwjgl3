@@ -2,13 +2,12 @@ package myau.util;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderGlobal;
+import net.lax1dude.eaglercraft.v1_8.opengl.GlStateManager;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.lax1dude.eaglercraft.v1_8.opengl.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 
@@ -117,7 +116,28 @@ public final class RenderUtil {
 
     /** Outline box. lineWidth is ignored on WebGL (always 1px). */
     public static void drawBoundingBox(AxisAlignedBB bb, int red, int green, int blue, int alpha, float lineWidth) {
-        RenderGlobal.drawOutlinedBoundingBox(bb, red, green, blue, alpha);
+        Tessellator t = Tessellator.getInstance();
+        WorldRenderer wr = t.getWorldRenderer();
+        wr.begin(1, DefaultVertexFormats.POSITION_COLOR);
+        edge(wr, bb.minX, bb.minY, bb.minZ, bb.maxX, bb.minY, bb.minZ, red, green, blue, alpha);
+        edge(wr, bb.maxX, bb.minY, bb.minZ, bb.maxX, bb.minY, bb.maxZ, red, green, blue, alpha);
+        edge(wr, bb.maxX, bb.minY, bb.maxZ, bb.minX, bb.minY, bb.maxZ, red, green, blue, alpha);
+        edge(wr, bb.minX, bb.minY, bb.maxZ, bb.minX, bb.minY, bb.minZ, red, green, blue, alpha);
+        edge(wr, bb.minX, bb.maxY, bb.minZ, bb.maxX, bb.maxY, bb.minZ, red, green, blue, alpha);
+        edge(wr, bb.maxX, bb.maxY, bb.minZ, bb.maxX, bb.maxY, bb.maxZ, red, green, blue, alpha);
+        edge(wr, bb.maxX, bb.maxY, bb.maxZ, bb.minX, bb.maxY, bb.maxZ, red, green, blue, alpha);
+        edge(wr, bb.minX, bb.maxY, bb.maxZ, bb.minX, bb.maxY, bb.minZ, red, green, blue, alpha);
+        edge(wr, bb.minX, bb.minY, bb.minZ, bb.minX, bb.maxY, bb.minZ, red, green, blue, alpha);
+        edge(wr, bb.maxX, bb.minY, bb.minZ, bb.maxX, bb.maxY, bb.minZ, red, green, blue, alpha);
+        edge(wr, bb.maxX, bb.minY, bb.maxZ, bb.maxX, bb.maxY, bb.maxZ, red, green, blue, alpha);
+        edge(wr, bb.minX, bb.minY, bb.maxZ, bb.minX, bb.maxY, bb.maxZ, red, green, blue, alpha);
+        t.draw();
+    }
+
+    private static void edge(WorldRenderer wr, double x1, double y1, double z1, double x2, double y2, double z2,
+            int red, int green, int blue, int alpha) {
+        wr.pos(x1, y1, z1).color(red, green, blue, alpha).endVertex();
+        wr.pos(x2, y2, z2).color(red, green, blue, alpha).endVertex();
     }
 
     /** Horizontal circle (line loop) in camera-relative coordinates. */

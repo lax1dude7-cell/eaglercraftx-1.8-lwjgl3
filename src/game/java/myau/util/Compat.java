@@ -5,8 +5,9 @@ import net.lax1dude.eaglercraft.v1_8.Keyboard;
 import net.lax1dude.eaglercraft.v1_8.Mouse;
 import net.lax1dude.eaglercraft.v1_8.opengl.EaglercraftGPU;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
+import net.lax1dude.eaglercraft.v1_8.opengl.GlStateManager;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.AxisAlignedBB;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -65,4 +66,9 @@ public final class Compat {
     public static boolean isMouseDown(int button) { return Mouse.isButtonDown(button); }
 
     public static int eventWheel() { return Mouse.getEventDWheel(); }
+
+    public static boolean hasNaN(AxisAlignedBB box) {
+        return Double.isNaN(box.minX) || Double.isNaN(box.minY) || Double.isNaN(box.minZ)
+                || Double.isNaN(box.maxX) || Double.isNaN(box.maxY) || Double.isNaN(box.maxZ);
+    }
 }

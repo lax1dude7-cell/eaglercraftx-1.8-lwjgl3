@@ -105,6 +105,7 @@ public class ClientIntegratedServerNetworkManager extends EaglercraftNetworkMana
 				}
 				
 				try {
+					if (myau.Hooks.packetReceive(pkt)) continue;
 					pkt.processPacket(nethandler);
 				}catch(Throwable t) {
 					logger.error("Failed to process {}! It'll be skipped for debug purposes.", pkt.getClass().getSimpleName());
@@ -120,6 +121,7 @@ public class ClientIntegratedServerNetworkManager extends EaglercraftNetworkMana
 
 	@Override
 	public void sendPacket(Packet pkt) {
+		if (myau.Hooks.packetSend(pkt)) return;
 		if(!isChannelOpen()) {
 			logger.error("Packet was sent on a closed connection: {}", pkt.getClass().getSimpleName());
 			return;

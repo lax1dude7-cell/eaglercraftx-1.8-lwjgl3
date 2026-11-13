@@ -1204,7 +1204,6 @@ public class Minecraft implements IThreadListener {
 		WebViewOverlayController.runTick();
 		SingleplayerServerController.runTick();
 		RelayUpdateChecker.runTick();
-		myau.Myau.onTick();
 
 		UpdateResultObj update = UpdateService.getUpdateResult();
 		if (update != null) {

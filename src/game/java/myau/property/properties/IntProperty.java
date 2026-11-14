@@ -9,7 +9,12 @@ public class IntProperty extends Property implements SliderProperty {
     public IntProperty(String name, int def, int min, int max) { super(name); value = def; this.min = min; this.max = max; }
     public IntProperty(String name, int def, int min, int max, myau.property.Condition c) { this(name, def, min, max); setCondition(c); }
     public int getValue() { return value; }
-    public void setValue(int v) { value = Math.max(min, Math.min(max, v)); }
+    public void setValue(int v) {
+        int bounded = Math.max(min, Math.min(max, v));
+        if (value == bounded) return;
+        value = bounded;
+        myau.Myau.saveConfig();
+    }
     public double getMin() { return min; }
     public double getMax() { return max; }
     public double getIncrement() { return 1; }

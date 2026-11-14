@@ -8,7 +8,12 @@ public class ColorProperty extends Property {
     public ColorProperty(String name, int rgb) { super(name); value = rgb & 0xFFFFFF; }
     public ColorProperty(String name, int rgb, myau.property.Condition c) { this(name, rgb); setCondition(c); }
     public int getValue() { return value; }
-    public void setValue(int v) { value = v & 0xFFFFFF; }
+    public void setValue(int v) {
+        int color = v & 0xFFFFFF;
+        if (value == color) return;
+        value = color;
+        myau.Myau.saveConfig();
+    }
     public String formatValue() {
         String h = Integer.toHexString(value);
         while (h.length() < 6) h = "0" + h;

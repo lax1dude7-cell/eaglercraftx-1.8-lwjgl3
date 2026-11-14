@@ -30,6 +30,7 @@ public final class Myau {
     public static FloatManager floatManager;
     public static FriendManager friendManager;
     public static TargetManager targetManager;
+    public static ConfigManager configManager;
     private static boolean initialised;
 
     private Myau() {}
@@ -57,6 +58,12 @@ public final class Myau {
         CombatModules.register(moduleManager);   // real Combat modules
         MovementModules.register(moduleManager); // real Movement modules
         StubModules.register(moduleManager);     // placeholders for everything else (skipped if a real module exists)
+        configManager = new ConfigManager(moduleManager);
+        configManager.load();
+    }
+
+    public static void saveConfig() {
+        if (configManager != null) configManager.save();
     }
 
     /** Call at the END of GuiIngame.renderGameOverlay. */

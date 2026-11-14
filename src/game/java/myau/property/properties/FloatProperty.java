@@ -9,7 +9,12 @@ public class FloatProperty extends Property implements SliderProperty {
     public FloatProperty(String name, float def, float min, float max) { super(name); value = def; this.min = min; this.max = max; }
     public FloatProperty(String name, float def, float min, float max, myau.property.Condition c) { this(name, def, min, max); setCondition(c); }
     public float getValue() { return value; }
-    public void setValue(float v) { value = Math.max(min, Math.min(max, v)); }
+    public void setValue(float v) {
+        float bounded = Math.max(min, Math.min(max, v));
+        if (value == bounded) return;
+        value = bounded;
+        myau.Myau.saveConfig();
+    }
     public double getMin() { return min; }
     public double getMax() { return max; }
     public double getIncrement() { return 0.01; }

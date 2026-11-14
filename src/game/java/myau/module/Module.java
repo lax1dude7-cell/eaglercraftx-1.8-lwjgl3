@@ -47,9 +47,17 @@ public class Module {
     public void setCategory(Category c) { this.category = c; }
     public boolean isEnabled() { return enabled; }
     public boolean isHidden() { return hidden; }
-    public void setHidden(boolean h) { hidden = h; }
+    public void setHidden(boolean h) {
+        if (hidden == h) return;
+        hidden = h;
+        myau.Myau.saveConfig();
+    }
     public int getKey() { return key; }
-    public void setKey(int k) { key = k; }
+    public void setKey(int k) {
+        if (key == k) return;
+        key = k;
+        myau.Myau.saveConfig();
+    }
     public String[] getSuffix() { return new String[0]; }
     public boolean shouldKeepSprint() { return false; }
     public void verifyValue(String s) {}
@@ -70,6 +78,7 @@ public class Module {
         if (e == enabled) return;
         enabled = e;
         if (e) onEnabled(); else onDisabled();
+        myau.Myau.saveConfig();
     }
 
     public void onEnabled() {}

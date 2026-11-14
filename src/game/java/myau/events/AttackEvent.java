@@ -1,9 +1,11 @@
 package myau.events;
 
-import myau.event.events.Event;
+import myau.event.events.ModuleEvent;
 import net.minecraft.entity.Entity;
+import myau.module.Kinds;
+import myau.module.Module;
 
-public class AttackEvent implements Event {
+public class AttackEvent extends ModuleEvent {
     private final Entity target;
     private boolean cancelled;
 
@@ -22,5 +24,15 @@ public class AttackEvent implements Event {
 
     public void setCancelled(boolean cancelled) {
         this.cancelled = cancelled;
+    }
+
+    @Override
+    public int getKind() {
+        return Kinds.ATTACK;
+    }
+
+    @Override
+    public void dispatch(Module module) {
+        module.onAttack(this);
     }
 }

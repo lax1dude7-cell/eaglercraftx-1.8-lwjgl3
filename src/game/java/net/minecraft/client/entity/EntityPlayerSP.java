@@ -664,7 +664,7 @@ public class EntityPlayerSP extends AbstractClientPlayer {
 		boolean flag2 = this.movementInput.moveForward >= f;
 		this.movementInput.updatePlayerMoveState();
 		myau.Hooks.moveInput();
-		if (this.isUsingItem() && !this.isRiding()) {
+		if (myau.Hooks.isUsingItem(this) && !this.isRiding()) {
 			this.movementInput.moveStrafe *= 0.2F;
 			this.movementInput.moveForward *= 0.2F;
 			this.sprintToggleTimer = 0;

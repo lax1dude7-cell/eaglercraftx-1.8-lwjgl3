@@ -123,7 +123,8 @@ public abstract class AbstractClientPlayer extends EntityPlayer {
 
 		IAttributeInstance iattributeinstance = this.getEntityAttribute(SharedMonsterAttributes.movementSpeed);
 		f = (float) ((double) f
-				* ((iattributeinstance.getAttributeValue() / (double) this.capabilities.getWalkSpeed() + 1.0D) / 2.0D));
+				* ((myau.Hooks.fovAttribute(this, iattributeinstance) / (double) this.capabilities.getWalkSpeed()
+						+ 1.0D) / 2.0D));
 		if (this.capabilities.getWalkSpeed() == 0.0F || Float.isNaN(f) || Float.isInfinite(f)) {
 			f = 1.0F;
 		}

@@ -36,11 +36,6 @@ public final class CombatModules {
         reg(mm, new Velocity(), false);
         reg(mm, new Wtap(), false);
         // placeholders other modules reference (replaced when their categories are ported)
-        mm.register(new Fly(), Category.MOVEMENT);
-        mm.register(new Speed(), Category.MOVEMENT);
-        mm.register(new NoSlow(), Category.MOVEMENT);
-        mm.register(new LongJump(), Category.MOVEMENT);
-        mm.register(new KeepSprint(), Category.MOVEMENT);
         mm.register(new Scaffold(), Category.PLAYER);
         mm.register(new AutoHeal(), Category.PLAYER);
         mm.register(new BedNuker(), Category.MISC);

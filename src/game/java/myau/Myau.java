@@ -27,6 +27,7 @@ public final class Myau {
     public static LagManager lagManager;
     public static PlayerStateManager playerStateManager;
     public static RotationManager rotationManager;
+    public static FloatManager floatManager;
     public static FriendManager friendManager;
     public static TargetManager targetManager;
     private static boolean initialised;
@@ -43,6 +44,7 @@ public final class Myau {
         lagManager = new LagManager();
         playerStateManager = new PlayerStateManager();
         rotationManager = new RotationManager();
+        floatManager = new FloatManager();
         friendManager = new FriendManager();
         targetManager = new TargetManager();
         friendManager.load();
@@ -53,6 +55,7 @@ public final class Myau {
         moduleManager.register(new DynamicIsland(), Category.RENDER);
         moduleManager.register(new ClickGUIModule(), Category.RENDER);
         CombatModules.register(moduleManager);   // real Combat modules
+        MovementModules.register(moduleManager); // real Movement modules
         StubModules.register(moduleManager);     // placeholders for everything else (skipped if a real module exists)
     }
 

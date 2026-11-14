@@ -1,8 +1,10 @@
 package myau.events;
 
-import myau.event.events.Event;
+import myau.event.events.ModuleEvent;
+import myau.module.Kinds;
+import myau.module.Module;
 
-public class StrafeEvent implements Event {
+public class StrafeEvent extends ModuleEvent {
     private float strafe;
     private float forward;
     private float friction;
@@ -35,5 +37,15 @@ public class StrafeEvent implements Event {
 
     public void setFriction(float float1) {
         this.friction = float1;
+    }
+
+    @Override
+    public int getKind() {
+        return Kinds.STRAFE;
+    }
+
+    @Override
+    public void dispatch(Module module) {
+        module.onStrafe(this);
     }
 }

@@ -1,6 +1,8 @@
 package myau.events;
 
 import myau.event.events.callables.EventCancellable;
+import myau.module.Kinds;
+import myau.module.Module;
 
 public class WindowClickEvent extends EventCancellable {
     private final int windowsId;
@@ -13,5 +15,15 @@ public class WindowClickEvent extends EventCancellable {
         this.slotId = slotId;
         this.mouseButtonClicked = mouseButtonClicked;
         this.mode = mode;
+    }
+
+    @Override
+    public int getKind() {
+        return Kinds.WINDOW_CLICK;
+    }
+
+    @Override
+    public void dispatch(Module module) {
+        module.onWindowClick(this);
     }
 }

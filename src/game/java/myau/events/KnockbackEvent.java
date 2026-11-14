@@ -1,6 +1,8 @@
 package myau.events;
 
 import myau.event.events.callables.EventCancellable;
+import myau.module.Kinds;
+import myau.module.Module;
 
 public class KnockbackEvent extends EventCancellable {
     private double x;
@@ -38,5 +40,15 @@ public class KnockbackEvent extends EventCancellable {
     public void setZ(double z) {
         this.z = z;
         this.setCancelled(true);
+    }
+
+    @Override
+    public int getKind() {
+        return Kinds.KNOCKBACK;
+    }
+
+    @Override
+    public void dispatch(Module module) {
+        module.onKnockback(this);
     }
 }

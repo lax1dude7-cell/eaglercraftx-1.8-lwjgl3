@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
@@ -34,6 +35,8 @@ public final class Acc {
     // Entity / EntityLivingBase / EntityPlayer
     public static boolean getIsInWeb(Entity e) { return e.isInWeb; }
     public static int getJumpTicks(EntityLivingBase e) { return e.jumpTicks; }
+    public static void setJumpTicks(EntityLivingBase e, int v) { e.jumpTicks = v; }
+    public static AttributeModifier getSprintingSpeedBoostModifier(EntityLivingBase e) { return EntityLivingBase.sprintingSpeedBoostModifier; }
     public static ItemStack getItemInUse(EntityPlayer p) { return p.itemInUse; }
     public static void setItemInUse(EntityPlayer p, ItemStack s) { p.itemInUse = s; }
     public static int getItemInUseCount(EntityPlayer p) { return p.itemInUseCount; }

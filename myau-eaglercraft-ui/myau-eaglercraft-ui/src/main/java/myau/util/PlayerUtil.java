@@ -3,6 +3,8 @@ package myau.util;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
@@ -51,6 +53,19 @@ public class PlayerUtil {
     public static boolean isAirBelow() {
         AxisAlignedBB bb = mc.thePlayer.getEntityBoundingBox().offset(0.0, -1.0, 0.0);
         return !mc.theWorld.getCollidingBoundingBoxes(mc.thePlayer, bb).isEmpty();
+    }
+
+    public static boolean canFly(float fallThreshold) {
+        if (!mc.thePlayer.capabilities.allowFlying && !mc.thePlayer.capabilities.disableDamage) {
+            PotionEffect jumpEffect = mc.thePlayer.getActivePotionEffect(Potion.jump);
+            float jumpBoost = jumpEffect != null ? (float) (jumpEffect.getAmplifier() + 1) : 0.0F;
+            float fallDistance = mc.thePlayer.fallDistance;
+            if (mc.thePlayer.motionY < -0.67 || !isAirBelow()) {
+                fallDistance -= (float) mc.thePlayer.motionY;
+            }
+            return MathHelper.ceiling_float_int(fallDistance - fallThreshold - jumpBoost) > 0;
+        }
+        return false;
     }
 
     /** Client-side attack without sending anything extra: vanilla attack logic (KeepSprint handled by its own hook). */

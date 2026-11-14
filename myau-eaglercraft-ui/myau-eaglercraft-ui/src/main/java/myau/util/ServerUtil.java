@@ -15,4 +15,7 @@ public class ServerUtil {
             return false;
         }
     }
+
+    /** Hypixel-lobby scoreboard heuristic from the Forge client: not applicable on Eaglercraft, always false. */
+    public static boolean hasPlayerCountInfo() { return false; }
 }

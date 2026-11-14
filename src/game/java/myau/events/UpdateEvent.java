@@ -1,9 +1,11 @@
 package myau.events;
 
-import myau.event.events.Event;
+import myau.event.events.ModuleEvent;
 import myau.event.types.EventType;
+import myau.module.Kinds;
+import myau.module.Module;
 
-public class UpdateEvent implements Event {
+public class UpdateEvent extends ModuleEvent {
     private final EventType type;
     private final float yaw;
     private final float pitch;
@@ -70,5 +72,15 @@ public class UpdateEvent implements Event {
             this.priority = priority;
             this.rotated = true;
         }
+    }
+
+    @Override
+    public int getKind() {
+        return Kinds.UPDATE;
+    }
+
+    @Override
+    public void dispatch(Module module) {
+        module.onUpdate(this);
     }
 }

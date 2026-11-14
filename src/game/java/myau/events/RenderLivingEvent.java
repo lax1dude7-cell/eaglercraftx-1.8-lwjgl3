@@ -1,10 +1,12 @@
 package myau.events;
 
-import myau.event.events.Event;
+import myau.event.events.ModuleEvent;
 import myau.event.types.EventType;
+import myau.module.Kinds;
+import myau.module.Module;
 import net.minecraft.entity.EntityLivingBase;
 
-public class RenderLivingEvent implements Event {
+public class RenderLivingEvent extends ModuleEvent {
     private final EventType type;
     private final EntityLivingBase entity;
 
@@ -19,5 +21,15 @@ public class RenderLivingEvent implements Event {
 
     public EntityLivingBase getEntity() {
         return this.entity;
+    }
+
+    @Override
+    public int getKind() {
+        return Kinds.RENDER_LIVING;
+    }
+
+    @Override
+    public void dispatch(Module module) {
+        module.onRenderLiving(this);
     }
 }

@@ -1700,7 +1700,7 @@ public abstract class World implements IBlockAccess {
 				}
 			}
 
-			if (vec3.lengthVector() > 0.0D && entityIn.isPushedByWater()) {
+			if (vec3.lengthVector() > 0.0D && myau.Hooks.isPushedByWater(entityIn)) {
 				vec3 = vec3.normalize();
 				double d1 = 0.014D;
 				entityIn.motionX += vec3.xCoord * d1;

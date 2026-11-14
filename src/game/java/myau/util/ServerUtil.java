@@ -15,4 +15,6 @@ public class ServerUtil {
             return false;
         }
     }
+
+    public static boolean hasPlayerCountInfo() { return false; }
 }

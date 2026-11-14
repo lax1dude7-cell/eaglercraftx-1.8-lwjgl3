@@ -9,7 +9,7 @@ Eaglercraft ships the same names. Where a name differs in this repo, find the eq
 | `Minecraft` | `timer` (the `Timer` instance), `rightClickDelayTimer` |
 | `KeyBinding` | `pressed` |
 | `Entity` | `isInWeb` |
-| `EntityLivingBase` | `jumpTicks` |
+| `EntityLivingBase` | `jumpTicks`, `isJumping`, and the static `sprintingSpeedBoostModifier` |
 | `EntityPlayer` | `itemInUse`, `itemInUseCount` |
 | `EntityPlayerSP` | `lastReportedYaw`, `lastReportedPitch` (and `renderArmYaw`, `prevRenderArmYaw` if not already public) |
 | `PlayerControllerMP` | `blockHitDelay`, `curBlockDamageMP`, `currentPlayerItem`, `isHittingBlock`, method `syncCurrentPlayItem()` |
@@ -74,8 +74,21 @@ Eaglercraft ships the same names. Where a name differs in this repo, find the eq
 22. INCOMING: where a received packet is about to be processed (`packet.processPacket(netHandler)`):
     `if (myau.Hooks.packetReceive(packet)) continue/return;`  (skip processing when it returns true)
 
+### Movement hooks (added with the Movement modules)
+23. `EntityPlayerSP.onLivingUpdate()` - replace the `this.isUsingItem()` call(s) used for the item-slowdown check with `myau.Hooks.isUsingItem(this)` (NoSlow).
+24. `EntityPlayer.attackTargetEntityWithCurrentItem(Entity)` - replace BOTH `0.6D` constants (`this.motionX *= 0.6D; this.motionZ *= 0.6D;`) with `myau.Hooks.keepSprintMotion(0.6D)`.
+25. Same method - replace `this.setSprinting(false);` with `myau.Hooks.attackSetSprinting(this, false);` (KeepSprint).
+26. `Entity.moveEntity(double, double, double)` - the line `boolean flag = this.onGround && this.isSneaking() && this instanceof EntityPlayer;` becomes
+    `boolean flag = myau.Hooks.safeWalk(this, this.onGround && this.isSneaking() && this instanceof EntityPlayer);` (SafeWalk).
+27. `EntityLivingBase.moveEntityWithHeading` (water branch) - `float f3 = (float)EnchantmentHelper.getDepthStriderModifier(this);` becomes
+    `float f3 = myau.Hooks.jesusSpeed(this, (float)EnchantmentHelper.getDepthStriderModifier(this));` (Jesus).
+28. `World.handleMaterialAcceleration` - replace `entity.isPushedByWater()` with `myau.Hooks.isPushedByWater(entity)` (Jesus no-push).
+29. `AbstractClientPlayer.getFovModifier` - replace `iattributeinstance.getAttributeValue()` with `myau.Hooks.fovAttribute(this, iattributeinstance)` (Sprint FOV fix).
+(The Timer module needs nothing: it sets `Minecraft.timer.timerSpeed`, which is why `Minecraft.timer` must be public.)
+
 ## C. Checklist when it compiles but misbehaves
 - Aura/rotations do nothing -> hooks 12 and 13 are missing or in the wrong order (head -> override -> motionUpdate -> return).
 - No knockback control -> hook 17. Reach does nothing -> hook 10 (both constants). HitBox does nothing -> hook 18.
 - Blink/LagRange/BackTrack/ServerLag do nothing -> hooks 21/22.
+- NoSlow does nothing -> hook 23. KeepSprint does nothing -> hooks 24+25. SafeWalk -> 26. Jesus -> 27+28. Sprint FOV -> 29.
 - Sword doesn't show the block pose with KillAura autoblock -> hook 11.

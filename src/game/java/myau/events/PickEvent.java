@@ -1,8 +1,10 @@
 package myau.events;
 
-import myau.event.events.Event;
+import myau.event.events.ModuleEvent;
+import myau.module.Kinds;
+import myau.module.Module;
 
-public class PickEvent implements Event {
+public class PickEvent extends ModuleEvent {
     private double range;
 
     public PickEvent(double double1) {
@@ -15,5 +17,15 @@ public class PickEvent implements Event {
 
     public void setRange(double double1) {
         this.range = double1;
+    }
+
+    @Override
+    public int getKind() {
+        return Kinds.PICK;
+    }
+
+    @Override
+    public void dispatch(Module module) {
+        module.onPick(this);
     }
 }

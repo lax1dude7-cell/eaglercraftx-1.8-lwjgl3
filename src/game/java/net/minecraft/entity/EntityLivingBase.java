@@ -79,7 +79,7 @@ import net.minecraft.world.WorldServer;
 public abstract class EntityLivingBase extends Entity {
 	private static final EaglercraftUUID sprintingSpeedBoostModifierUUID = EaglercraftUUID
 			.fromString("662A6B8D-DA3E-4C1C-8813-96EA6097278D");
-	private static final AttributeModifier sprintingSpeedBoostModifier = (new AttributeModifier(
+	public static final AttributeModifier sprintingSpeedBoostModifier = (new AttributeModifier(
 			sprintingSpeedBoostModifierUUID, "Sprinting speed boost", 0.30000001192092896D, 2)).setSaved(false);
 	private BaseAttributeMap attributeMap;
 	private final CombatTracker _combatTracker = new CombatTracker(this);
@@ -126,7 +126,7 @@ public abstract class EntityLivingBase extends Entity {
 	protected float field_70741_aB;
 	protected int scoreValue;
 	protected float lastDamage;
-	protected boolean isJumping;
+	public boolean isJumping;
 	public float moveStrafing;
 	public float moveForward;
 	protected float randomYawVelocity;
@@ -1416,7 +1416,7 @@ public abstract class EntityLivingBase extends Entity {
 				double d0 = this.posY;
 				float f3 = 0.8F;
 				float f4 = 0.02F;
-				float f5 = (float) EnchantmentHelper.getDepthStriderModifier(this);
+				float f5 = myau.Hooks.jesusSpeed(this, (float) EnchantmentHelper.getDepthStriderModifier(this));
 				if (f5 > 3.0F) {
 					f5 = 3.0F;
 				}

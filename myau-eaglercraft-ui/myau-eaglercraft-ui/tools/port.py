@@ -64,7 +64,7 @@ def port(name):
         outer_end=match_paren(s,i)            # matches the outer '('
         expr=s[j+1:outer_end].strip()
         rest=s[outer_end+1:]
-        m=re.match(r'\.(\w+)\(',rest)
+        m=re.match(r'\s*\.(\w+)\(',rest)
         if not m: flags.append('accessor-nomatch'); s=s[:i]+'/*ACC?*/'+s[i+2:]; continue
         meth=m.group(1)
         po=outer_end+1+m.end()-1
@@ -139,6 +139,14 @@ def port(name):
         s=s[:end]+add+'\n    '+s[end:]
     nprop=len(re.findall(r'new \w*Property\(',s))
     if nprop!=len(props): flags.append('property count mismatch: new=%d fields=%d'%(nprop,len(props)))
+    # ---- shared rewrites (all categories)
+    s=re.sub(r'([\w.]+)\.getValue\(\)\.toString\(\)',r'String.valueOf(\1.getValue())',s)
+    s=re.sub(r'IAccessor(\w+) (\w+) = \(IAccessor\w+\) ([\w.]+);',lambda m:'/*acc-local*/ Object '+m.group(2)+' = '+m.group(3)+';',s)
+    s=re.sub(r'IAccessorRenderManager (\w+) = \(IAccessorRenderManager\) mc\.getRenderManager\(\);',r'net.minecraft.client.renderer.entity.RenderManager \1 = mc.getRenderManager();',s)
+    s=re.sub(r'Acc\.getRenderPos([XYZ])\(([^()]*(?:\([^()]*\))?[^()]*)\)',r'\2.viewerPos\1',s)
+    s=s.replace('.getRenderPosX()','.viewerPosX').replace('.getRenderPosY()','.viewerPosY').replace('.getRenderPosZ()','.viewerPosZ')
+    s=re.sub(r'import org\.lwjgl\.input\.(Keyboard|Mouse);\n','',s)
+    s=s.replace('Keyboard.isKeyDown(','myau.util.Compat.isKeyDown(').replace('Mouse.isButtonDown(','myau.util.Compat.isMouseDown(')
     # ---- boxed value calls
     s=re.sub(r'([\w.]+)\.getValue\(\)\.(double|float|int|long)Value\(\)',lambda m:'((%s) %s.getValue())'%(m.group(2),m.group(1)),s)
     s=s.replace('modules.get(','modules.get(')

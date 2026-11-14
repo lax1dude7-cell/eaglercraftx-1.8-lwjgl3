@@ -5,6 +5,10 @@ import myau.event.types.EventType;
 import myau.events.*;
 import myau.management.RotationState;
 import myau.module.modules.HitBox;
+import myau.module.modules.Jesus;
+import myau.module.modules.KeepSprint;
+import myau.module.modules.NoSlow;
+import myau.module.modules.Sprint;
 import myau.module.modules.KillAura;
 import myau.module.modules.NoHitDelay;
 import myau.util.Acc;
@@ -13,7 +17,11 @@ import myau.util.PacketUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
+import net.minecraft.client.entity.AbstractClientPlayer;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.ai.attributes.IAttributeInstance;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.Packet;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
@@ -235,5 +243,73 @@ public final class Hooks {
         if (mc.thePlayer == null) return;
         if (usingSaved) { Acc.setItemInUse(mc.thePlayer, savedUsing); usingSaved = false; savedUsing = null; }
         if (countSaved) { Acc.setItemInUseCount(mc.thePlayer, savedCount); countSaved = false; }
+    }
+
+    // ================================================================== Movement hooks
+    // ---- EntityPlayerSP.onLivingUpdate: replace the `this.isUsingItem()` call with Hooks.isUsingItem(this) (NoSlow) ----
+    public static boolean isUsingItem(EntityPlayerSP p) {
+        NoSlow ns = (NoSlow) Myau.moduleManager.modules.get(NoSlow.class);
+        if (ns != null && ns.isEnabled()) {
+            if (ns.isMiauAnyActive()) return !ns.shouldCancelMiauSlowdown();
+            if (ns.isAnyActive()) return false;
+        }
+        return p.isUsingItem();
+    }
+
+    // ---- EntityPlayer.attackTargetEntityWithCurrentItem: BOTH `0.6D` constants -> Hooks.keepSprintMotion(0.6D) ----
+    public static double keepSprintMotion(double speed) {
+        if (Myau.moduleManager == null) return speed;
+        KeepSprint ks = (KeepSprint) Myau.moduleManager.modules.get(KeepSprint.class);
+        return ks != null && ks.isEnabled() && ks.shouldKeepSprint()
+                ? speed + (1.0 - speed) * (1.0 - (double) ks.slowdown.getValue() / 100.0)
+                : speed;
+    }
+
+    // ---- same method: replace `this.setSprinting(false)` with Hooks.attackSetSprinting(this, false) ----
+    public static void attackSetSprinting(EntityPlayer p, boolean value) {
+        if (Myau.moduleManager != null) {
+            KeepSprint ks = (KeepSprint) Myau.moduleManager.modules.get(KeepSprint.class);
+            if (ks != null && ks.isEnabled() && ks.shouldKeepSprint()) return;
+        }
+        p.setSprinting(value);
+    }
+
+    // ---- Entity.moveEntity: `boolean flag = this.onGround && this.isSneaking() && this instanceof EntityPlayer;` -> wrap with Hooks.safeWalk(this, ...) ----
+    public static boolean safeWalk(Entity e, boolean flag) {
+        if (e instanceof EntityPlayerSP) {
+            SafeWalkEvent event = new SafeWalkEvent(flag);
+            EventManager.call(event);
+            return event.isSafeWalk();
+        }
+        return flag;
+    }
+
+    // ---- EntityLivingBase.moveEntityWithHeading (water branch): `float f3 = (float)EnchantmentHelper.getDepthStriderModifier(this);`
+    //      becomes `float f3 = Hooks.jesusSpeed(this, (float)EnchantmentHelper.getDepthStriderModifier(this));` ----
+    public static float jesusSpeed(EntityLivingBase e, float f3) {
+        if (e instanceof EntityPlayerSP && f3 == (float) EnchantmentHelper.getDepthStriderModifier(e) && Myau.moduleManager != null) {
+            Jesus j = (Jesus) Myau.moduleManager.modules.get(Jesus.class);
+            if (j != null && j.isEnabled() && (!j.groundOnly.getValue() || e.onGround)) return Math.max(f3, j.speed.getValue());
+        }
+        return f3;
+    }
+
+    // ---- World.handleMaterialAcceleration: replace `entity.isPushedByWater()` with Hooks.isPushedByWater(entity) ----
+    public static boolean isPushedByWater(Entity e) {
+        if (e instanceof EntityPlayerSP && Myau.moduleManager != null) {
+            Jesus j = (Jesus) Myau.moduleManager.modules.get(Jesus.class);
+            if (j != null && j.isEnabled() && j.noPush.getValue()) return false;
+        }
+        return e.isPushedByWater();
+    }
+
+    // ---- AbstractClientPlayer.getFovModifier: replace `iattributeinstance.getAttributeValue()` with Hooks.fovAttribute(this, iattributeinstance) ----
+    public static double fovAttribute(AbstractClientPlayer p, IAttributeInstance inst) {
+        double v = inst.getAttributeValue();
+        if (p instanceof EntityPlayerSP && Myau.moduleManager != null) {
+            Sprint s = (Sprint) Myau.moduleManager.modules.get(Sprint.class);
+            return s != null && s.isEnabled() && s.shouldApplyFovFix(inst) ? v * 1.300000011920929 : v;
+        }
+        return v;
     }
 }

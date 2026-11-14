@@ -64,6 +64,8 @@ public final class EventManager {
             Myau.blinkManager.onTick((TickEvent) e);
             Myau.lagManager.onTick((TickEvent) e);
             Myau.playerStateManager.onTick((TickEvent) e);
+        } else if (kind == Kinds.PLAYER_UPDATE) {
+            Myau.floatManager.onPlayerUpdate((PlayerUpdateEvent) e);
         } else if (kind == Kinds.RENDER_3D) {
             Myau.rotationManager.onRender3D((Render3DEvent) e);
         } else if (kind == Kinds.PACKET) {

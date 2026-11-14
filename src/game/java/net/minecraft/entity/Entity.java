@@ -473,7 +473,7 @@ public abstract class Entity implements ICommandSender {
 			double d3 = x;
 			double d4 = y;
 			double d5 = z;
-			boolean flag = this.onGround && this.isSneaking() && this instanceof EntityPlayer;
+			boolean flag = myau.Hooks.safeWalk(this, this.onGround && this.isSneaking() && this instanceof EntityPlayer);
 			if (flag) {
 				double d6;
 				for (d6 = 0.05D; x != 0.0D && this.worldObj

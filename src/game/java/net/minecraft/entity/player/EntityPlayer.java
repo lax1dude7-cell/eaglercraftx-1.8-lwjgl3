@@ -1144,9 +1144,9 @@ public abstract class EntityPlayer extends EntityLivingBase implements ICommandS
 											* 0.5F),
 									0.1D, (double) (MathHelper.cos(this.rotationYaw * 3.1415927F / 180.0F) * (float) i
 											* 0.5F));
-							this.motionX *= 0.6D;
-							this.motionZ *= 0.6D;
-							this.setSprinting(false);
+							this.motionX *= myau.Hooks.keepSprintMotion(0.6D);
+							this.motionZ *= myau.Hooks.keepSprintMotion(0.6D);
+							myau.Hooks.attackSetSprinting(this, false);
 						}
 
 						if (entity instanceof EntityPlayerMP && entity.velocityChanged) {

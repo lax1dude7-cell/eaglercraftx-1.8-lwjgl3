@@ -86,6 +86,7 @@ public class Module {
 
     // ---- 2D HUD hook (called every frame while enabled) ----
     public void onRender2D(float partialTicks, ScaledResolution sr) {}
+    public void onRender2D(Render2DEvent e) {}
 
     // ---- event handlers ----
     public void onTick(TickEvent e) {}

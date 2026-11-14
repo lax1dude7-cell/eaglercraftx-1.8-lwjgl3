@@ -35,9 +35,7 @@ public final class CombatModules {
         reg(mm, new ThrowAura(), false);
         reg(mm, new Velocity(), false);
         reg(mm, new Wtap(), false);
-        // placeholders other modules reference (replaced when their categories are ported)
-        mm.register(new Scaffold(), Category.PLAYER);
-        mm.register(new AutoHeal(), Category.PLAYER);
+        // placeholder other modules reference (replaced when the Misc category is ported)
         mm.register(new BedNuker(), Category.MISC);
     }
 }

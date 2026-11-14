@@ -12,6 +12,7 @@ Eaglercraft ships the same names. Where a name differs in this repo, find the eq
 | `EntityLivingBase` | `jumpTicks`, `isJumping`, and the static `sprintingSpeedBoostModifier` |
 | `EntityPlayer` | `itemInUse`, `itemInUseCount` |
 | `EntityPlayerSP` | `lastReportedYaw`, `lastReportedPitch` (and `renderArmYaw`, `prevRenderArmYaw` if not already public) |
+| `ItemSword` | `material` (the `ToolMaterial` field) |
 | `PlayerControllerMP` | `blockHitDelay`, `curBlockDamageMP`, `currentPlayerItem`, `isHittingBlock`, method `syncCurrentPlayItem()` |
 | `EntityRenderer` | method `setupCameraTransform(float, int)` |
 | `C03PacketPlayer` | `onGround` |
@@ -86,9 +87,18 @@ Eaglercraft ships the same names. Where a name differs in this repo, find the eq
 29. `AbstractClientPlayer.getFovModifier` - replace `iattributeinstance.getAttributeValue()` with `myau.Hooks.fovAttribute(this, iattributeinstance)` (Sprint FOV fix).
 (The Timer module needs nothing: it sets `Minecraft.timer.timerSpeed`, which is why `Minecraft.timer` must be public.)
 
+### Player hooks (added with the Player modules)
+30. `EntityRenderer.updateRenderer()` - first statement `myau.Hooks.updateRendererHead();` and before every return `myau.Hooks.updateRendererReturn();` (Scaffold / AutoBlockIn item spoof).
+    (Hook 11 `renderFrameHead/Return` now also does the Scaffold slot spoof - same call sites, nothing to change.)
+31. `GuiIngame.updateTick()` - replace the `inventoryplayer.getCurrentItem()` call with `myau.Hooks.updateTickItem(inventoryplayer)` (held-item animation follows the spoofed slot).
+32. `EntityRenderer.getMouseOver(float)` - right after the entity list is fetched (`List list = this.mc.theWorld.getEntitiesInAABBexcluding(...)`) and before the `for` loop over it: `myau.Hooks.ghostHand(list);` (GhostHand).
+33. AntiDebuff - replace EVERY `isPotionActive(Potion.confusion)` / `isPotionActive(Potion.blindness)` visual check with `myau.Hooks.isPotionActive(entity, potion)`:
+    `EntityPlayerSP.onLivingUpdate` (nausea portal overlay), `EntityRenderer.setupCameraTransform` (nausea wobble), `EntityRenderer.updateFogColor` and `EntityRenderer.setupFog` (blindness fog).
+
 ## C. Checklist when it compiles but misbehaves
 - Aura/rotations do nothing -> hooks 12 and 13 are missing or in the wrong order (head -> override -> motionUpdate -> return).
 - No knockback control -> hook 17. Reach does nothing -> hook 10 (both constants). HitBox does nothing -> hook 18.
 - Blink/LagRange/BackTrack/ServerLag do nothing -> hooks 21/22.
 - NoSlow does nothing -> hook 23. KeepSprint does nothing -> hooks 24+25. SafeWalk -> 26. Jesus -> 27+28. Sprint FOV -> 29.
+- Scaffold/AutoBlockIn item spoof shows the wrong item -> hooks 30/31 (and 11). GhostHand does nothing -> 32. AntiDebuff does nothing -> 33.
 - Sword doesn't show the block pose with KillAura autoblock -> hook 11.

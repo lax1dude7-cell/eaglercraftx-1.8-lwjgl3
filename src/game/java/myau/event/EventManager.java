@@ -25,4 +25,15 @@ public final class EventManager {
             }
         }
     }
+
+    public static void call(Render2DEvent e) {
+        if (Myau.moduleManager == null) return;
+        List<Module> all = Myau.moduleManager.all();
+        for (int priority = 0; priority <= 4; priority++) {
+            for (int i = 0; i < all.size(); i++) {
+                Module module = all.get(i);
+                if (module.isEnabled() && module.getPriority(Kinds.RENDER_2D) == priority) module.onRender2D(e);
+            }
+        }
+    }
 }

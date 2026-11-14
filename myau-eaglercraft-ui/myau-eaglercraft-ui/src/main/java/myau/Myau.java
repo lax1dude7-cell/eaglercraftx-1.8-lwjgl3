@@ -56,6 +56,7 @@ public final class Myau {
         moduleManager.register(new ClickGUIModule(), Category.RENDER);
         CombatModules.register(moduleManager);   // real Combat modules
         MovementModules.register(moduleManager); // real Movement modules
+        PlayerModules.register(moduleManager);   // real Player modules
         StubModules.register(moduleManager);     // placeholders for everything else (skipped if a real module exists)
     }
 
@@ -69,6 +70,7 @@ public final class Myau {
         GlStateManager.disableDepth();
         GlStateManager.disableLighting();
         for (Module m : moduleManager.all()) if (m.isEnabled()) m.onRender2D(partialTicks, sr);
+        myau.event.EventManager.call(new myau.events.Render2DEvent(partialTicks));
         GlStateManager.enableDepth();
         GlStateManager.color(1f, 1f, 1f, 1f);
     }

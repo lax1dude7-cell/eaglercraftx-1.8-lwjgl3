@@ -152,7 +152,7 @@ public class GuiIngame extends Gui {
 			this.renderPumpkinOverlay(scaledresolution);
 		}
 
-		if (!this.mc.thePlayer.isPotionActive(Potion.confusion)) {
+		if (!myau.Hooks.isPotionActive(this.mc.thePlayer, Potion.confusion)) {
 			float f = this.mc.thePlayer.prevTimeInPortal
 					+ (this.mc.thePlayer.timeInPortal - this.mc.thePlayer.prevTimeInPortal) * partialTicks;
 			if (f > 0.0F) {
@@ -929,7 +929,7 @@ public class GuiIngame extends Gui {
 
 		++this.updateCounter;
 		if (this.mc.thePlayer != null) {
-			ItemStack itemstack = this.mc.thePlayer.inventory.getCurrentItem();
+			ItemStack itemstack = myau.Hooks.updateTickItem(this.mc.thePlayer.inventory);
 			if (itemstack == null) {
 				this.remainingHighlightTicks = 0;
 			} else if (this.highlightingItemStack != null && itemstack.getItem() == this.highlightingItemStack.getItem()

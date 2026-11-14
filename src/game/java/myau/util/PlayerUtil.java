@@ -50,6 +50,11 @@ public class PlayerUtil {
         return mc.theWorld.getCollidingBoundingBoxes(mc.thePlayer, bb).isEmpty();
     }
 
+    public static boolean isAirAbove() {
+        AxisAlignedBB bb = mc.thePlayer.getEntityBoundingBox().offset(0.0, 1.0, 0.0);
+        return !mc.theWorld.getCollidingBoundingBoxes(mc.thePlayer, bb).isEmpty();
+    }
+
     public static boolean isAirBelow() {
         AxisAlignedBB bb = mc.thePlayer.getEntityBoundingBox().offset(0.0, -1.0, 0.0);
         return !mc.theWorld.getCollidingBoundingBoxes(mc.thePlayer, bb).isEmpty();

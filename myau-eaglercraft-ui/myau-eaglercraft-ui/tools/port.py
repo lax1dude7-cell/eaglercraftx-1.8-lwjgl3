@@ -12,7 +12,7 @@ EV = {
  'LoadWorldEvent':('onLoadWorld','LOAD_WORLD'), 'Render3DEvent':('onRender3D','RENDER_3D'), 'PickEvent':('onPick','PICK'),
  'RaytraceEvent':('onRaytrace','RAYTRACE'), 'HitBlockEvent':('onHitBlock','HIT_BLOCK'), 'CancelUseEvent':('onCancelUse','CANCEL_USE'),
  'SafeWalkEvent':('onSafeWalk','SAFE_WALK'), 'JumpEvent':('onJump','JUMP'), 'SwapItemEvent':('onSwapItem','SWAP_ITEM'),
- 'WindowClickEvent':('onWindowClick','WINDOW_CLICK'), 'ResizeEvent':('onResize','RESIZE'), 'RenderLivingEvent':('onRenderLiving','RENDER_LIVING'),
+ 'WindowClickEvent':('onWindowClick','WINDOW_CLICK'), 'Render2DEvent':('onRender2D','RENDER_2D'), 'ResizeEvent':('onResize','RESIZE'), 'RenderLivingEvent':('onRenderLiving','RENDER_LIVING'),
 }
 PRIO={'HIGHEST':0,'HIGH':1,'MEDIUM':2,'LOW':3,'LOWEST':4}
 
@@ -50,6 +50,7 @@ def port(name):
     if 'Acc.' not in s: pass
     # ---- this.X::getValue conditions
     s=re.sub(r'this\.(\w+)::getValue',lambda m:'new Condition() { public boolean test() { return '+name+'.this.'+m.group(1)+'.getValue(); } }',s)
+    s=re.sub(r'(?<=, )(?<![\w.])([a-z]\w*)::getValue\)',lambda m:'new Condition() { public boolean test() { return '+name+'.this.'+m.group(1)+'.getValue(); } })',s)
     # ---- CaseFormat / queues / GL11
     s=re.sub(r'CaseFormat\.UPPER_UNDERSCORE\.to\(CaseFormat\.UPPER_CAMEL, ([^;]*?)\)\}',lambda m:'TextUtil.camel('+m.group(1)+')}',s)
     s=s.replace('import com.google.common.base.CaseFormat;\n','import myau.util.TextUtil;\n')

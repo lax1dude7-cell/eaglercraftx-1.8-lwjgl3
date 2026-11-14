@@ -35,7 +35,7 @@ import net.minecraft.world.World;
  */
 public class ItemSword extends Item {
 	private float attackDamage;
-	private final Item.ToolMaterial material;
+	public final Item.ToolMaterial material;
 
 	public ItemSword(Item.ToolMaterial material) {
 		this.material = material;

@@ -5,6 +5,7 @@ import net.minecraft.client.gui.Gui;
 import net.lax1dude.eaglercraft.v1_8.opengl.GlStateManager;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.entity.Entity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.client.renderer.Tessellator;
 import net.lax1dude.eaglercraft.v1_8.opengl.WorldRenderer;
@@ -178,5 +179,25 @@ public final class RenderUtil {
         Entity v = Minecraft.getMinecraft().getRenderViewEntity();
         cameraFrustum.setPosition(v.posX, v.posY, v.posZ);
         return cameraFrustum.isBoundingBoxInFrustum(bb.expand(expand, expand, expand));
+    }
+
+    public static void renderBlock(net.minecraft.util.BlockPos pos, int color, boolean outline, boolean shade) {
+        net.minecraft.client.renderer.entity.RenderManager rm = Minecraft.getMinecraft().getRenderManager();
+        double x = pos.getX() - rm.viewerPosX;
+        double y = pos.getY() - rm.viewerPosY;
+        double z = pos.getZ() - rm.viewerPosZ;
+        AxisAlignedBB box = new AxisAlignedBB(x, y, z, x + 1.0, y + 1.0, z + 1.0);
+        int alpha = color >>> 24 & 255;
+        int red = color >> 16 & 255, green = color >> 8 & 255, blue = color & 255;
+        enableRenderState();
+        if (outline) drawBoundingBox(box, red, green, blue, alpha, 1.0F);
+        if (shade) drawFilledBox(box, red, green, blue);
+        disableRenderState();
+    }
+
+    public static void renderItemInGUI(ItemStack stack, int x, int y) {
+        Minecraft mc = Minecraft.getMinecraft();
+        mc.getRenderItem().renderItemAndEffectIntoGUI(stack, x, y);
+        mc.getRenderItem().renderItemOverlays(mc.fontRendererObj, stack, x, y);
     }
 }

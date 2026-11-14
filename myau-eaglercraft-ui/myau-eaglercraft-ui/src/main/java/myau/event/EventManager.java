@@ -54,6 +54,7 @@ public final class EventManager {
         if (e instanceof WindowClickEvent) return Kinds.WINDOW_CLICK;
         if (e instanceof ResizeEvent) return Kinds.RESIZE;
         if (e instanceof RenderLivingEvent) return Kinds.RENDER_LIVING;
+        if (e instanceof Render2DEvent) return Kinds.RENDER_2D;
         return -1;
     }
 
@@ -101,6 +102,7 @@ public final class EventManager {
             case Kinds.WINDOW_CLICK: m.onWindowClick((WindowClickEvent) e); break;
             case Kinds.RESIZE: m.onResize((ResizeEvent) e); break;
             case Kinds.RENDER_LIVING: m.onRenderLiving((RenderLivingEvent) e); break;
+            case Kinds.RENDER_2D: m.onRender2D((Render2DEvent) e); break;
             default: break;
         }
     }

@@ -638,7 +638,7 @@ public class EntityPlayerSP extends AbstractClientPlayer {
 			}
 
 			this.inPortal = false;
-		} else if (this.isPotionActive(Potion.confusion)
+		} else if (myau.Hooks.isPotionActive(this, Potion.confusion)
 				&& this.getActivePotionEffect(Potion.confusion).getDuration() > 60) {
 			this.timeInPortal += 0.006666667F;
 			if (this.timeInPortal > 1.0F) {

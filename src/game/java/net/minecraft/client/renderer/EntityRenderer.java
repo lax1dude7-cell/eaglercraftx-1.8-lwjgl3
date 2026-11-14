@@ -247,6 +247,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
 	 * Updates the entity renderer
 	 */
 	public void updateRenderer() {
+		myau.Hooks.updateRendererHead();
 		this.updateFovModifierHand();
 		this.updateTorchFlicker();
 		this.fogColor2 = this.fogColor1;
@@ -291,6 +292,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
 			this.bossColorModifier -= 0.0125F;
 		}
 
+		myau.Hooks.updateRendererReturn();
 	}
 
 	public void updateShaderGroupSize(int width, int height) {
@@ -340,6 +342,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
 								return entity2.canBeCollidedWith();
 							}
 						}));
+				myau.Hooks.ghostHand(list);
 				double d2 = d1;
 
 				for (int i = 0; i < list.size(); ++i) {
@@ -620,7 +623,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
 				+ (this.mc.thePlayer.timeInPortal - this.mc.thePlayer.prevTimeInPortal) * partialTicks;
 		if (f1 > 0.0F) {
 			byte b0 = 20;
-			if (this.mc.thePlayer.isPotionActive(Potion.confusion)) {
+			if (myau.Hooks.isPotionActive(this.mc.thePlayer, Potion.confusion)) {
 				b0 = 7;
 			}
 
@@ -1751,7 +1754,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
 		this.fogColorBlue *= f13;
 		double d1 = (entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * (double) partialTicks)
 				* worldclient.provider.getVoidFogYFactor();
-		if (entity instanceof EntityLivingBase && ((EntityLivingBase) entity).isPotionActive(Potion.blindness)) {
+		if (entity instanceof EntityLivingBase && myau.Hooks.isPotionActive((EntityLivingBase) entity, Potion.blindness)) {
 			int i = ((EntityLivingBase) entity).getActivePotionEffect(Potion.blindness).getDuration();
 			if (i < 20) {
 				d1 *= (double) (1.0F - (float) i / 20.0F);
@@ -1824,7 +1827,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
 		EaglercraftGPU.glNormal3f(0.0F, -1.0F, 0.0F);
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 		Block block = ActiveRenderInfo.getBlockAtEntityViewpoint(this.mc.theWorld, entity, parFloat1);
-		if (entity instanceof EntityLivingBase && ((EntityLivingBase) entity).isPotionActive(Potion.blindness)) {
+		if (entity instanceof EntityLivingBase && myau.Hooks.isPotionActive((EntityLivingBase) entity, Potion.blindness)) {
 			float f1 = 5.0F;
 			int i = ((EntityLivingBase) entity).getActivePotionEffect(Potion.blindness).getDuration();
 			if (i < 20) {
@@ -2530,7 +2533,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
 		}
 
 		Block block = ActiveRenderInfo.getBlockAtEntityViewpoint(this.mc.theWorld, entity, partialTicks);
-		if (entity instanceof EntityLivingBase && ((EntityLivingBase) entity).isPotionActive(Potion.blindness)) {
+		if (entity instanceof EntityLivingBase && myau.Hooks.isPotionActive((EntityLivingBase) entity, Potion.blindness)) {
 			float f1 = 5.0F;
 			int i = ((EntityLivingBase) entity).getActivePotionEffect(Potion.blindness).getDuration();
 			if (i < 20) {

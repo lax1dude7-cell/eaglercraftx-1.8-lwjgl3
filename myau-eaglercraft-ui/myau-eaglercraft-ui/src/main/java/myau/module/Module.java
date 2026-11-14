@@ -104,4 +104,5 @@ public class Module {
     public void onWindowClick(WindowClickEvent e) {}
     public void onResize(ResizeEvent e) {}
     public void onRenderLiving(RenderLivingEvent e) {}
+    public void onRender2D(Render2DEvent e) {}
 }

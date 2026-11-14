@@ -5,7 +5,10 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.culling.Frustum;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.Entity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
@@ -158,5 +161,46 @@ public final class RenderUtil {
         Entity v = Minecraft.getMinecraft().getRenderViewEntity();
         cameraFrustum.setPosition(v.posX, v.posY, v.posZ);
         return cameraFrustum.isBoundingBoxInFrustum(bb.expand(expand, expand, expand));
+    }
+
+    /** Block highlight used by Scaffold (camera-relative; line width ignored on WebGL). */
+    public static void renderBlock(BlockPos blockPos, int color, boolean outline, boolean shade) {
+        renderBox(blockPos.getX(), blockPos.getY(), blockPos.getZ(), 1, 1, 1, color, outline, shade);
+    }
+
+    public static void renderBox(double x, double y, double z, double x2, double y2, double z2, int color, boolean outline, boolean shade) {
+        net.minecraft.client.renderer.entity.RenderManager rm = Minecraft.getMinecraft().getRenderManager();
+        double xPos = x - rm.viewerPosX, yPos = y - rm.viewerPosY, zPos = z - rm.viewerPosZ;
+        AxisAlignedBB bb = new AxisAlignedBB(xPos, yPos, zPos, xPos + x2, yPos + y2, zPos + z2);
+        int a = (color >> 24) & 255, r = (color >> 16) & 255, g = (color >> 8) & 255, b = color & 255;
+        GlStateManager.pushMatrix();
+        enableRenderState();
+        GlStateManager.depthMask(false);
+        if (outline) RenderGlobal.drawOutlinedBoundingBox(bb, r, g, b, a);
+        if (shade) drawFilledBox(bb, r, g, b);
+        GlStateManager.depthMask(true);
+        disableRenderState();
+        GlStateManager.popMatrix();
+    }
+
+    /** Item icon + stack count in the GUI (enchantment text of the Forge client is omitted). */
+    public static void renderItemInGUI(ItemStack itemStack, int x, int y) {
+        Minecraft mc = Minecraft.getMinecraft();
+        GlStateManager.pushMatrix();
+        GlStateManager.depthMask(true);
+        GlStateManager.clear(256);
+        RenderHelper.enableGUIStandardItemLighting();
+        GlStateManager.pushMatrix();
+        GlStateManager.scale(1.0f, 1.0f, -0.01f);
+        mc.getRenderItem().zLevel = -150.0f;
+        mc.getRenderItem().renderItemAndEffectIntoGUI(itemStack, x, y);
+        mc.getRenderItem().renderItemOverlays(mc.fontRendererObj, itemStack, x, y);
+        mc.getRenderItem().zLevel = 0.0f;
+        GlStateManager.popMatrix();
+        RenderHelper.disableStandardItemLighting();
+        GlStateManager.enableAlpha();
+        GlStateManager.disableBlend();
+        GlStateManager.enableTexture2D();
+        GlStateManager.popMatrix();
     }
 }

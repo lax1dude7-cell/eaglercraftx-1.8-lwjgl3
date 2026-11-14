@@ -8,6 +8,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemSword;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.client.C03PacketPlayer;
@@ -36,6 +38,7 @@ public final class Acc {
     public static boolean getIsInWeb(Entity e) { return e.isInWeb; }
     public static int getJumpTicks(EntityLivingBase e) { return e.jumpTicks; }
     public static void setJumpTicks(EntityLivingBase e, int v) { e.jumpTicks = v; }
+    public static boolean isJumping(EntityLivingBase e) { return e.isJumping; }
     public static AttributeModifier getSprintingSpeedBoostModifier(EntityLivingBase e) { return EntityLivingBase.sprintingSpeedBoostModifier; }
     public static ItemStack getItemInUse(EntityPlayer p) { return p.itemInUse; }
     public static void setItemInUse(EntityPlayer p, ItemStack s) { p.itemInUse = s; }
@@ -45,6 +48,10 @@ public final class Acc {
     // PlayerControllerMP
     public static void callSyncCurrentPlayItem(PlayerControllerMP c) { c.syncCurrentPlayItem(); }
     public static int getBlockHitDelay(PlayerControllerMP c) { return c.blockHitDelay; }
+    public static void setBlockHitDelay(PlayerControllerMP c, int v) { c.blockHitDelay = v; }
+
+    // ItemSword
+    public static Item.ToolMaterial getMaterial(Item sword) { return ((ItemSword) sword).material; }
     public static float getCurBlockDamageMP(PlayerControllerMP c) { return c.curBlockDamageMP; }
     public static void setCurBlockDamageMP(PlayerControllerMP c, float v) { c.curBlockDamageMP = v; }
     public static int getCurrentPlayerItem(PlayerControllerMP c) { return c.currentPlayerItem; }

@@ -8,7 +8,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemSword;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.client.C03PacketPlayer;
 import net.minecraft.network.play.client.C0DPacketCloseWindow;
@@ -46,6 +48,10 @@ public final class Acc {
     // PlayerControllerMP
     public static void callSyncCurrentPlayItem(PlayerControllerMP c) { c.syncCurrentPlayItem(); }
     public static int getBlockHitDelay(PlayerControllerMP c) { return c.blockHitDelay; }
+    public static void setBlockHitDelay(PlayerControllerMP c, int v) { c.blockHitDelay = v; }
+
+    // ItemSword
+    public static Item.ToolMaterial getMaterial(Item sword) { return ((ItemSword) sword).material; }
     public static float getCurBlockDamageMP(PlayerControllerMP c) { return c.curBlockDamageMP; }
     public static void setCurBlockDamageMP(PlayerControllerMP c, float v) { c.curBlockDamageMP = v; }
     public static int getCurrentPlayerItem(PlayerControllerMP c) { return c.currentPlayerItem; }

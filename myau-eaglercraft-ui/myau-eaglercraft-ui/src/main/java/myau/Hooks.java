@@ -4,7 +4,11 @@ import myau.event.EventManager;
 import myau.event.types.EventType;
 import myau.events.*;
 import myau.management.RotationState;
+import myau.module.modules.AntiDebuff;
+import myau.module.modules.AutoBlockIn;
+import myau.module.modules.GhostHand;
 import myau.module.modules.HitBox;
+import myau.module.modules.Scaffold;
 import myau.module.modules.Jesus;
 import myau.module.modules.KeepSprint;
 import myau.module.modules.NoSlow;
@@ -12,7 +16,10 @@ import myau.module.modules.Sprint;
 import myau.module.modules.KillAura;
 import myau.module.modules.NoHitDelay;
 import myau.util.Acc;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.Potion;
+import java.util.List;
 import myau.util.PacketUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -226,8 +233,80 @@ public final class Hooks {
     private static boolean usingSaved, countSaved;
     private static int savedCount;
 
+    private static boolean slotSaved;
+    private static int savedSlotIndex;
+
+    private static void spoofSlot(boolean includeAutoBlockIn) {
+        Scaffold sc = (Scaffold) Myau.moduleManager.modules.get(Scaffold.class);
+        if (sc != null && sc.isEnabled() && sc.itemSpoof.getValue()) {
+            int slot = sc.getSlot();
+            if (slot >= 0) { savedSlotIndex = mc.thePlayer.inventory.currentItem; slotSaved = true; mc.thePlayer.inventory.currentItem = slot; }
+        }
+        if (includeAutoBlockIn) {
+            AutoBlockIn ab = (AutoBlockIn) Myau.moduleManager.modules.get(AutoBlockIn.class);
+            if (ab != null && ab.isEnabled() && ab.itemSpoof.getValue()) {
+                int slot = ab.getSlot();
+                if (slot >= 0) { savedSlotIndex = mc.thePlayer.inventory.currentItem; slotSaved = true; mc.thePlayer.inventory.currentItem = slot; }
+            }
+        }
+    }
+
+    private static void restoreSlot() {
+        if (slotSaved && mc.thePlayer != null) { mc.thePlayer.inventory.currentItem = savedSlotIndex; }
+        slotSaved = false;
+    }
+
+    // ---- EntityRenderer.updateRenderer: head -> updateRendererHead(), every return -> updateRendererReturn() (Scaffold/AutoBlockIn item spoof) ----
+    public static void updateRendererHead() {
+        if (mc.thePlayer == null || Myau.moduleManager == null) return;
+        spoofSlot(true);
+    }
+
+    public static void updateRendererReturn() { restoreSlot(); }
+
+    // ---- GuiIngame.updateTick: replace `inventoryplayer.getCurrentItem()` with Hooks.updateTickItem(inventoryplayer) (held-item bob uses the spoofed slot) ----
+    public static ItemStack updateTickItem(InventoryPlayer inv) {
+        if (Myau.moduleManager != null) {
+            Scaffold sc = (Scaffold) Myau.moduleManager.modules.get(Scaffold.class);
+            if (sc != null && sc.isEnabled() && sc.itemSpoof.getValue()) {
+                int slot = sc.getSlot();
+                if (slot >= 0) return inv.getStackInSlot(slot);
+            }
+            AutoBlockIn ab = (AutoBlockIn) Myau.moduleManager.modules.get(AutoBlockIn.class);
+            if (ab != null && ab.isEnabled() && ab.itemSpoof.getValue()) {
+                int slot = ab.getSlot();
+                if (slot >= 0) return inv.getStackInSlot(slot);
+            }
+        }
+        return inv.getCurrentItem();
+    }
+
+    // ---- EntityRenderer.getMouseOver: after `List list = ...getEntitiesInAABBexcluding(...)`, before iterating it: Hooks.ghostHand(list) ----
+    public static void ghostHand(List<Entity> list) {
+        if (Myau.moduleManager == null) return;
+        GhostHand gh = (GhostHand) Myau.moduleManager.modules.get(GhostHand.class);
+        if (gh != null && gh.isEnabled()) {
+            for (int i = list.size() - 1; i >= 0; i--) if (gh.shouldSkip(list.get(i))) list.remove(i);
+        }
+    }
+
+    // ---- every `x.isPotionActive(Potion.confusion / Potion.blindness)` visual check: EntityPlayerSP.onLivingUpdate (nausea portal),
+    //      EntityRenderer.setupCameraTransform (nausea wobble), EntityRenderer.updateFogColor + setupFog (blindness)
+    //      -> Hooks.isPotionActive(entity, potion) ----
+    public static boolean isPotionActive(EntityLivingBase e, Potion potion) {
+        if (Myau.moduleManager != null && (potion == Potion.confusion || potion == Potion.blindness)) {
+            AntiDebuff ad = (AntiDebuff) Myau.moduleManager.modules.get(AntiDebuff.class);
+            if (ad != null && ad.isEnabled()) {
+                if (potion == Potion.confusion && ad.nausea.getValue()) return false;
+                if (potion == Potion.blindness && ad.blindness.getValue()) return false;
+            }
+        }
+        return e.isPotionActive(potion);
+    }
+
     public static void renderFrameHead() {
         if (mc.thePlayer == null || Myau.moduleManager == null) return;
+        spoofSlot(false);
         KillAura ka = (KillAura) Myau.moduleManager.modules.get(KillAura.class);
         if (ka != null && ka.isEnabled() && ka.isBlocking()) {
             savedUsing = Acc.getItemInUse(mc.thePlayer);
@@ -240,6 +319,7 @@ public final class Hooks {
     }
 
     public static void renderFrameReturn() {
+        restoreSlot();
         if (mc.thePlayer == null) return;
         if (usingSaved) { Acc.setItemInUse(mc.thePlayer, savedUsing); usingSaved = false; savedUsing = null; }
         if (countSaved) { Acc.setItemInUseCount(mc.thePlayer, savedCount); countSaved = false; }

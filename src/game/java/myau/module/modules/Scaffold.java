@@ -124,7 +124,7 @@ public class Scaffold extends Module {
 
     private boolean shouldStopSprint() {
         if (this.isThreeFmcMode() && !this.isThreeFmcTellyMode()) {
-            return true;
+            return this.sprintMode.getValue() == 0;
         }
         if (this.isTowering()) {
             return false;
@@ -174,7 +174,8 @@ public class Scaffold extends Module {
     }
 
     private void quietThreeFmcMovement() {
-        if (!this.isThreeFmcMode() || this.isThreeFmcTellyMode() || mc.thePlayer == null) {
+        if (!this.isThreeFmcMode() || this.isThreeFmcTellyMode() || this.sprintMode.getValue() != 0
+                || mc.thePlayer == null) {
             return;
         }
 
@@ -191,7 +192,8 @@ public class Scaffold extends Module {
         if (mc.thePlayer == null || this.placedThisTick || this.threeFmcPlaceCooldown > 0) {
             return false;
         }
-        if ((!this.isThreeFmcTellyMode() && mc.thePlayer.isSprinting()) || mc.thePlayer.isCollidedHorizontally || mc.thePlayer.hurtTime > 0) {
+        if ((!this.isThreeFmcTellyMode() && this.sprintMode.getValue() == 0 && mc.thePlayer.isSprinting())
+                || mc.thePlayer.isCollidedHorizontally || mc.thePlayer.hurtTime > 0) {
             return false;
         }
         if (mc.thePlayer.onGround) {

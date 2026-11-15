@@ -22,7 +22,7 @@ import java.util.LinkedList;
 public class ClickAssits extends Module {
     private static final Minecraft mc = Minecraft.getMinecraft();
 
-    private ClickBot bot;
+    private ClickBot bot = new ClickBot();
     private boolean ignoreNextLeft = false;
     private boolean ignoreNextRight = false;
 
@@ -226,7 +226,8 @@ public class ClickAssits extends Module {
         }
     }
 
-    public void onEnable() {
+    @Override
+    public void onEnabled() {
         this.bot = new ClickBot();
         this.ignoreNextLeft = false;
         this.ignoreNextRight = false;
@@ -234,12 +235,12 @@ public class ClickAssits extends Module {
         this.rightClicks.clear();
     }
 
-    public void onDisable() {
+    @Override
+    public void onDisabled() {
         this.ignoreNextLeft = false;
         this.ignoreNextRight = false;
         this.leftClicks.clear();
         this.rightClicks.clear();
-        this.bot = null;
     }
 
     /**

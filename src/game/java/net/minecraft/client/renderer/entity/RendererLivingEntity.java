@@ -123,9 +123,11 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
 		this.mainModel.isChild = entitylivingbase.isChild();
 
 		try {
-			float f2 = this.interpolateRotation(entitylivingbase.prevRenderYawOffset, entitylivingbase.renderYawOffset,
+			float f2 = myau.Hooks.renderPlayerBodyYaw(entitylivingbase,
+					this.interpolateRotation(entitylivingbase.prevRenderYawOffset, entitylivingbase.renderYawOffset, f1),
 					f1);
-			float f3 = this.interpolateRotation(entitylivingbase.prevRotationYawHead, entitylivingbase.rotationYawHead,
+			float f3 = myau.Hooks.renderPlayerHeadYaw(entitylivingbase,
+					this.interpolateRotation(entitylivingbase.prevRotationYawHead, entitylivingbase.rotationYawHead, f1),
 					f1);
 			float f4 = f3 - f2;
 			if (entitylivingbase.isRiding() && entitylivingbase.ridingEntity instanceof EntityLivingBase) {
@@ -148,8 +150,9 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
 				}
 			}
 
-			float f9 = entitylivingbase.prevRotationPitch
-					+ (entitylivingbase.rotationPitch - entitylivingbase.prevRotationPitch) * f1;
+			float f9 = myau.Hooks.renderPlayerPitch(entitylivingbase,
+					entitylivingbase.prevRotationPitch + (entitylivingbase.rotationPitch - entitylivingbase.prevRotationPitch) * f1,
+					f1);
 			this.renderLivingAt(entitylivingbase, d0, d1, d2);
 			float f10 = this.handleRotationFloat(entitylivingbase, f1);
 			this.rotateCorpse(entitylivingbase, f10, f2, f1);

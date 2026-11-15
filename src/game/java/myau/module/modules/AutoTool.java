@@ -19,7 +19,7 @@ public class AutoTool extends Module {
     private int tickDelayCounter = 0;
     public final IntProperty switchDelay = new IntProperty("delay", 0, 0, 5);
     public final BooleanProperty switchBack = new BooleanProperty("switch-back", true);
-    public final BooleanProperty sneakOnly = new BooleanProperty("sneak-only", true);
+    public final BooleanProperty sneakOnly = new BooleanProperty("sneak-only", false);
 
     public AutoTool() {
         super("AutoTool", false);
@@ -73,6 +73,9 @@ public class AutoTool extends Module {
 
     @Override
     public void onDisabled() {
+        if (this.switchBack.getValue() && this.previousSlot != -1 && mc.thePlayer != null) {
+            mc.thePlayer.inventory.currentItem = this.previousSlot;
+        }
         this.currentToolSlot = -1;
         this.previousSlot = -1;
         this.tickDelayCounter = 0;

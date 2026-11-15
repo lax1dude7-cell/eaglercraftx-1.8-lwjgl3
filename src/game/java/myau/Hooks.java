@@ -164,6 +164,31 @@ public final class Hooks {
         return e instanceof EntityPlayerSP && Myau.rotationManager != null && Myau.rotationManager.isRotated();
     }
 
+    private static boolean useThirdPersonRotations(EntityLivingBase entity) {
+        return entity == mc.thePlayer && mc.gameSettings != null && mc.gameSettings.thirdPersonView != 0
+                && RotationState.isActived();
+    }
+
+    public static float renderPlayerBodyYaw(EntityLivingBase entity, float original, float partialTicks) {
+        if (!useThirdPersonRotations(entity)) return original;
+        float delta = MathHelper.wrapAngleTo180_float(
+                RotationState.getRenderYawOffset() - RotationState.getPrevRenderYawOffset());
+        return RotationState.getPrevRenderYawOffset() + delta * partialTicks;
+    }
+
+    public static float renderPlayerHeadYaw(EntityLivingBase entity, float original, float partialTicks) {
+        if (!useThirdPersonRotations(entity)) return original;
+        float delta = MathHelper.wrapAngleTo180_float(
+                RotationState.getRotationYawHead() - RotationState.getPrevRotationYawHead());
+        return RotationState.getPrevRotationYawHead() + delta * partialTicks;
+    }
+
+    public static float renderPlayerPitch(EntityLivingBase entity, float original, float partialTicks) {
+        if (!useThirdPersonRotations(entity)) return original;
+        return RotationState.getPrevRotationPitch()
+                + (RotationState.getRotationPitch() - RotationState.getPrevRotationPitch()) * partialTicks;
+    }
+
     // ---- Entity.setVelocity head: if result != null && result.isCancelled() -> set motion to result and return ----
     public static KnockbackEvent knockback(Entity e, double x, double y, double z) {
         if (!(e instanceof EntityPlayerSP)) return null;
